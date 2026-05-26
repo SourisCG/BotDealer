@@ -1,0 +1,19 @@
+#rootBox{
+    -fx-background-color: #2b2b2b;
+}
+#welcomeLabel{
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+#startButton{
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 16px;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 5px;
+    -fx-cursor: hand;
+}
+#startButton:hover{
+    -fx-background-color: #45a049;
+}

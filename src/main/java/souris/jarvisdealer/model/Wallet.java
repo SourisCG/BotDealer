@@ -1,5 +1,7 @@
 package souris.jarvisdealer.model;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,8 +25,11 @@ public class Wallet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nameOfFounds;
-    private Double balance;
+    @ManyToOne
+    @JoinColumn(name = "founds_id")
+    private Founds nameOfFounds;
+
+    private BigDecimal balance;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
