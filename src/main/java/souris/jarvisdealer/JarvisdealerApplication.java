@@ -8,7 +8,7 @@ import souris.jarvisdealer.ui.MainApp;
 @SpringBootApplication
 public class JarvisdealerApplication {
 
-	public static void main(String[] args) {	
+	public static void main(String[] args) {
 		SpringApplication.run(JarvisdealerApplication.class, args);
 		Application.launch(MainApp.class, args);
 	}

@@ -1,0 +1,22 @@
+#rootbox{
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #80ed99, #301466 60%);
+}
+
+#startButton {
+    -fx-background-color: #38a3a5;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+#startButton:hover {
+    -fx-background-color: #80ed99;
+}
+
+.welcome-label {
+    -fx-text-fill: rgb(255, 255, 255);
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}

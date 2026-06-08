@@ -8,7 +8,7 @@
     fx:controller="souris.jarvisdealer.ui.StartController"
     alignment="CENTER"
     spacing="20"
-    stylesheets="@../css/start.css">
-    <Label id="welcomeLabel" text="Welcome to the Application!"/>
-    <Button id="startButton" text="Start" onAction="#handleStartButton"/>
+    stylesheets="@../css/start.fx.css">
+    <Label fx:id="welcomeLabel" text="Welcome to the Application!" styleClass="welcome-label"/>
+    <Button fx:id="startButton" text="Start" onAction="#handleStartButton"/>
 </VBox>
