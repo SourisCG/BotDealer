@@ -2,16 +2,20 @@ package souris.jarvisdealer.ui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.shape.Rectangle;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.concurrent.Task;
 import javafx.util.Duration;
 
 public class StartController {
 	@FXML
 	private Label welcomeLabel;
+	@FXML
+	private ProgressBar progressBar;
 
 	public void initialize() {
 		welcomeLabel.setOpacity(0);
@@ -39,6 +43,19 @@ public class StartController {
 	}
 
 	@FXML
-	private void handleStartButton() {
+	private void start() {
+		progressBar.setVisible(true);
+		Task<Void> task = new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				for (int i = 0; i <= 100; i++) {
+					Thread.sleep(50);
+					updateProgress(i, 100);
+				}
+				return null;
+			}
+		};
+		progressBar.progressProperty().bind(task.progressProperty());
+		new Thread(task).start();
 	}
 }
