@@ -4,7 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 /db/
-.opencode/
+.opencode/*
+!.opencode/skills/
+!.opencode/skills/**
 
 ### STS ###
 .apt_generated
