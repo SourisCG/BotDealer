@@ -11,7 +11,7 @@ public class MainApp extends Application{
     public void start(Stage arg0) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/start.fxml"));
         Parent root = loader.load();
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(root, 800, 600);
         arg0.setScene(scene);
         arg0.setTitle("Jarvis Dealer");
         arg0.show();

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+
+<VBox id="rootbox"
+    xmlns:fx="http://javafx.com/fxml"
+    stylesheets="@../css/firstConfiguration.fx.css">
+    <Label fx:id="welcomeLabel" text="First Configuration" styleClass="welcome-label"/>
+</VBox>
