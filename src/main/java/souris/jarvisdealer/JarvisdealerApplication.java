@@ -9,7 +9,9 @@ import souris.jarvisdealer.ui.MainApp;
 public class JarvisdealerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JarvisdealerApplication.class, args);
+		SpringApplication app = new SpringApplication(JarvisdealerApplication.class);
+		app.setHeadless(false);
+		app.run(args);
 		Application.launch(MainApp.class, args);
 	}
 }

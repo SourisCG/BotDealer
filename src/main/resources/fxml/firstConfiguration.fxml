@@ -3,8 +3,18 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
 
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Hyperlink?>
 <VBox id="rootbox"
     xmlns:fx="http://javafx.com/fxml"
-    stylesheets="@../css/firstConfiguration.fx.css">
-    <Label fx:id="welcomeLabel" text="First Configuration" styleClass="welcome-label"/>
+    stylesheets="@../css/firstConfiguration.fx.css"
+    fx:controller="souris.jarvisdealer.ui.FirstConfigurationController">
+    <Label fx:id="InitialConfigurationLabel" text="Configuracion Inicial" styleClass="initialConfiguration"/>
+    <Label wrapText="true"
+        styleClass="initialInstructions"
+        text="Hola.
+        .&#10;Bienvenido a la primera configuracion, primero necesitamos tu token de discord.
+        .&#10;Si aun no lo tienes, puedes obtenerlo en la pagina de desarrollo de discord aqui: "/>
+        <Hyperlink text="Obtener token de discord" styleClass="linkToDiscordToken" onAction="#openDiscordPortal"/>
+    <TextArea fx:id="tokenArea" promptText="Introduce tu token de discord"/>
 </VBox>
