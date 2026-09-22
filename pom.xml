@@ -92,6 +92,7 @@
 			</activation>
 			<properties>
 				<jpackage.bin>${jpackage.home}/bin/jpackage</jpackage.bin>
+				<java.bin>${jpackage.home}/bin/java</java.bin>
 			</properties>
 		</profile>
 		<profile>
@@ -101,6 +102,7 @@
 			</activation>
 			<properties>
 				<jpackage.bin>${jpackage.home}/bin/jpackage.exe</jpackage.bin>
+				<java.bin>${jpackage.home}/bin/java.exe</java.bin>
 			</properties>
 		</profile>
 
@@ -192,12 +194,20 @@
 								<id>download-bundled-assets</id>
 								<phase>prepare-package</phase>
 								<goals>
-									<goal>java</goal>
+									<goal>exec</goal>
 								</goals>
 								<configuration>
 									<skip>${skip.assets}</skip>
-									<mainClass>souris.botdealer.diagnostics.AssetFetcher</mainClass>
+									<!--
+										A forked JVM on purpose: exec:java would run the fetcher inside
+										Maven's own process, where its System.exit would kill the build
+										instead of failing it cleanly.
+									-->
+									<executable>${java.bin}</executable>
 									<arguments>
+										<argument>-cp</argument>
+										<classpath/>
+										<argument>souris.botdealer.diagnostics.AssetFetcher</argument>
 										<argument>${jpackage.input}</argument>
 									</arguments>
 								</configuration>

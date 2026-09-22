@@ -146,9 +146,11 @@ jobs:
           V="${{ steps.ver.outputs.version }}"
           mkdir -p out
           cp target/dist/exe/*.exe out/
-          ZIP="out/$APP_NAME-$V-windows-app-image.zip"
+          # Absolute path: 7z runs from inside the image directory, so a relative
+          # destination would land under target/ and the upload step would find nothing.
+          ZIP="$GITHUB_WORKSPACE/out/$APP_NAME-$V-windows-app-image.zip"
           if command -v 7z > /dev/null 2>&1; then
-            (cd target/dist/app-image && 7z a -tzip "../../$ZIP" BotDealer > /dev/null)
+            (cd target/dist/app-image && 7z a -tzip "$ZIP" BotDealer > /dev/null)
           else
             powershell -NoProfile -Command "Compress-Archive -Path 'target/dist/app-image/BotDealer' -DestinationPath '$ZIP' -Force"
           fi
