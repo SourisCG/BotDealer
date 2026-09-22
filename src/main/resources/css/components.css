@@ -1,0 +1,50 @@
+/*
+ * BotDealer design system - reusable components (GPL-3.0, see LICENSE).
+ */
+.welcome-label {
+	-fx-text-fill: -ink;
+	-fx-font-size: 26px;
+	-fx-font-weight: bold;
+}
+
+.info-label {
+	-fx-text-fill: -ink-dim;
+	-fx-font-size: 13px;
+	-fx-wrap-text: true;
+	-fx-text-alignment: center;
+}
+
+.phase-label {
+	-fx-text-fill: -brand-green-pale;
+	-fx-font-size: 12px;
+	-fx-font-style: italic;
+}
+
+.primary-button {
+	-fx-background-color: -brand-teal;
+	-fx-text-fill: white;
+	-fx-font-size: 15px;
+	-fx-font-weight: bold;
+	-fx-padding: 10px 28px;
+	-fx-background-radius: 6px;
+	-fx-cursor: hand;
+}
+
+.primary-button:disabled {
+	-fx-opacity: 0.6;
+}
+
+.progress-bar {
+	-fx-pref-width: 320px;
+}
+
+.progress-bar > .bar {
+	-fx-background-color: -brand-green;
+	-fx-background-insets: 0;
+	-fx-background-radius: 3px;
+}
+
+.progress-bar > .track {
+	-fx-background-color: -surface-soft;
+	-fx-background-radius: 3px;
+}

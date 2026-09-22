@@ -1,0 +1,26 @@
+/*
+ * BotDealer design system - base tokens (GPL-3.0, see LICENSE).
+ * Palette inherited from the original start.fx.css: green #80ed99,
+ * deep purple #301466, teal #38a3a5.
+ */
+.root {
+	-brand-green: #80ed99;
+	-brand-green-soft: #57cc99;
+	-brand-green-pale: #c7f9cc;
+	-brand-purple: #301466;
+	-brand-purple-deep: #1a0b3b;
+	-brand-teal: #38a3a5;
+	-brand-blue: #22577a;
+
+	-ink: #f4f6fb;
+	-ink-dim: #b9c2d8;
+	-surface: #241344;
+	-surface-soft: #322058;
+	-line: #4a3670;
+
+	-fx-font-family: "System";
+}
+
+.app-root {
+	-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, -brand-green 0%, -brand-purple 62%);
+}

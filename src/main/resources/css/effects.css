@@ -1,0 +1,18 @@
+/*
+ * BotDealer design system - motion and hover states (GPL-3.0, see LICENSE).
+ * Animations stay subtle: fades and gentle color shifts only.
+ */
+.primary-button:hover {
+	-fx-background-color: -brand-green;
+	-fx-text-fill: -brand-purple-deep;
+}
+
+.primary-button:pressed {
+	-fx-background-color: -brand-green-soft;
+	-fx-scale-x: 0.98;
+	-fx-scale-y: 0.98;
+}
+
+.welcome-label {
+	/* the clip-reveal animation is driven from StartController */
+}

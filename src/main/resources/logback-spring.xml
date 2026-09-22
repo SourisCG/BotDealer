@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	BotDealer logging: console + rotating file, with %mask(...) redaction of Discord-style secrets.
+	Converter: souris.botdealer.logging.TokenMaskingConverter
+	Log directory comes from the "botdealer.log.dir" property (defaults to the per-user data folder).
+-->
+<configuration>
+	<conversionRule conversionWord="mask" class="souris.botdealer.logging.TokenMaskingConverter"/>
+
+	<springProperty name="logDir" source="botdealer.log.dir" defaultValue="${user.home}/.local/share/BotDealer/logs"/>
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %mask(%msg%ex)%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${logDir}/botdealer.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${logDir}/botdealer.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<maxFileSize>10MB</maxFileSize>
+			<maxHistory>14</maxHistory>
+			<totalSizeCap>200MB</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %mask(%msg%ex)%n</pattern>
+		</encoder>
+	</appender>
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE"/>
+		<appender-ref ref="FILE"/>
+	</root>
+</configuration>

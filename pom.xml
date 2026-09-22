@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	BOTDEALER BUILD FILE
+	Copyright (C) 2026 Sebastián García
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version. See LICENSE for details.
+
+	Profiles:
+	  (default)  dev build: mvn verify / mvn javafx:run
+	  package    jpackage installers (.exe/.rpm/.deb/app-image)  [Phase 2]
+	  portable   zipped app-image + fat jar                       [Phase 2]
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -9,46 +22,64 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>souris</groupId>
-	<artifactId>jarvisdealer</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
-	<url/>
+	<artifactId>botdealer</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<name>BotDealer</name>
+	<description>BotDealer - Discord gambling (chorizos), music and TTS bot with a JavaFX desktop app</description>
+	<url>https://github.com/SourisCG/BotDealer</url>
 	<licenses>
-		<license/>
+		<license>
+			<name>GNU General Public License, version 3</name>
+			<url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
 	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+
 	<properties>
 		<java.version>25</java.version>
-	</properties>
-	<dependencies>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+		<javafx.version>25.0.4</javafx.version>
+		<jda.version>6.7.0</jda.version>
+		<jdave.version>0.1.8</jdave.version>
+		<udpqueue.version>0.2.12</udpqueue.version>
+		<opus-java.version>1.1.1</opus-java.version>
+		<lavaplayer.version>2.2.7</lavaplayer.version>
+		<youtube-source.version>1.18.2</youtube-source.version>
+		<piper-jni.version>1.4.1</piper-jni.version>
+		<java-keyring.version>1.0.4</java-keyring.version>
+		<lombok.version>1.18.48</lombok.version>
+	</properties>
+
+	<!-- Repositories for artifacts that are not on Maven Central -->
+	<repositories>
+		<repository>
+			<id>lavalink</id>
+			<name>Lavalink Maven</name>
+			<url>https://maven.lavalink.dev/releases</url>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>false</enabled></snapshots>
+		</repository>
+		<repository>
+			<id>jitpack</id>
+			<name>JitPack (LavaPlayer audio decoders)</name>
+			<url>https://jitpack.io</url>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>false</enabled></snapshots>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<!-- Spring: persistence only. No web server (desktop app), no actuator, no H2 console (token exposure). -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-h2console</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -57,58 +88,164 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
 			<optional>true</optional>
 		</dependency>
+
+		<!-- Discord -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
-			<scope>test</scope>
+			<groupId>net.dv8tion</groupId>
+			<artifactId>JDA</artifactId>
+			<version>${jda.version}</version>
+		</dependency>
+		<!-- DAVE E2E encryption for Discord voice (mandatory since 2026-03-01). Requires Java 25. -->
+		<dependency>
+			<groupId>club.minnced</groupId>
+			<artifactId>jdave-api</artifactId>
+			<version>${jdave.version}</version>
+		</dependency>
+		<!-- libdave natives for every target platform; the loader picks the right one at runtime. -->
+		<dependency>
+			<groupId>club.minnced</groupId>
+			<artifactId>jdave-native-linux-x86-64</artifactId>
+			<version>${jdave.version}</version>
 		</dependency>
 		<dependency>
-    		<groupId>net.dv8tion</groupId>
-    		<artifactId>JDA</artifactId>
-    		<version>5.0.0-beta.20</version>
+			<groupId>club.minnced</groupId>
+			<artifactId>jdave-native-linux-aarch64</artifactId>
+			<version>${jdave.version}</version>
 		</dependency>
 		<dependency>
-    		<groupId>org.openjfx</groupId>
-    		<artifactId>javafx-controls</artifactId>
-    		<version>21</version>
+			<groupId>club.minnced</groupId>
+			<artifactId>jdave-native-win-x86-64</artifactId>
+			<version>${jdave.version}</version>
 		</dependency>
 		<dependency>
-    		<groupId>org.openjfx</groupId>
-    		<artifactId>javafx-fxml</artifactId>
-    		<version>21</version>
+			<groupId>club.minnced</groupId>
+			<artifactId>jdave-native-darwin</artifactId>
+			<version>${jdave.version}</version>
+		</dependency>
+		<!-- Native UDP send loop (optional performance; falls back to DefaultSendFactory). -->
+		<dependency>
+			<groupId>club.minnced</groupId>
+			<artifactId>udpqueue-native-linux-x86-64</artifactId>
+			<version>${udpqueue.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>club.minnced</groupId>
+			<artifactId>udpqueue-native-linux-aarch64</artifactId>
+			<version>${udpqueue.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>club.minnced</groupId>
+			<artifactId>udpqueue-native-win-x86-64</artifactId>
+			<version>${udpqueue.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>club.minnced</groupId>
+			<artifactId>udpqueue-native-darwin</artifactId>
+			<version>${udpqueue.version}</version>
+		</dependency>
+		<!-- Opus encode/decode (volume control, TTS pipeline). Single jar with all platforms. -->
+		<dependency>
+			<groupId>club.minnced</groupId>
+			<artifactId>opus-java</artifactId>
+			<version>${opus-java.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>club.minnced</groupId>
+			<artifactId>opus-java-natives</artifactId>
+			<version>${opus-java.version}</version>
 		</dependency>
 
+		<!-- Music playback -->
+		<dependency>
+			<groupId>dev.arbjerg</groupId>
+			<artifactId>lavaplayer</artifactId>
+			<version>${lavaplayer.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>dev.lavalink.youtube</groupId>
+			<artifactId>v2</artifactId>
+			<version>${youtube-source.version}</version>
+		</dependency>
+
+		<!-- Offline neural TTS (Piper). Jar bundles natives for win/linux/mac x64+arm64. GPL-3.0. -->
+		<dependency>
+			<groupId>io.github.jvoice-project</groupId>
+			<artifactId>piper-jni</artifactId>
+			<version>${piper-jni.version}</version>
+		</dependency>
+
+		<!-- OS keychain for secrets (Windows Credential Manager / macOS Keychain / Linux Secret Service). -->
+		<dependency>
+			<groupId>com.github.javakeyring</groupId>
+			<artifactId>java-keyring</artifactId>
+			<version>${java-keyring.version}</version>
+		</dependency>
+
+		<!-- JavaFX (platform classifier resolved at build time by the openjfx POM profiles). -->
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>${javafx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-fxml</artifactId>
+			<version>${javafx.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.hibernate.orm</groupId>
-				<artifactId>hibernate-maven-plugin</artifactId>
-				<version>${hibernate.version}</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
 				<executions>
 					<execution>
-						<?m2e ignore?>
-						<id>enhance</id>
+						<id>enforce-versions</id>
 						<goals>
-							<goal>enhance</goal>
+							<goal>enforce</goal>
 						</goals>
 						<configuration>
-							<enableAssociationManagement>true</enableAssociationManagement>
+							<rules>
+								<requireMavenVersion>
+									<version>3.9.0</version>
+								</requireMavenVersion>
+								<requireJavaVersion>
+									<version>[25,26)</version>
+								</requireJavaVersion>
+							</rules>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.graalvm.buildtools</groupId>
-				<artifactId>native-maven-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<release>25</release>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<mainClass>souris.botdealer.BotDealerApplication</mainClass>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
@@ -118,42 +255,15 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>default-compile</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-						<configuration>
-							<annotationProcessorPaths>
-								<path>
-									<groupId>org.projectlombok</groupId>
-									<artifactId>lombok</artifactId>
-								</path>
-							</annotationProcessorPaths>
-						</configuration>
-					</execution>
-					<execution>
-						<id>default-testCompile</id>
-						<phase>test-compile</phase>
-						<goals>
-							<goal>testCompile</goal>
-						</goals>
-						<configuration>
-							<annotationProcessorPaths>
-								<path>
-									<groupId>org.projectlombok</groupId>
-									<artifactId>lombok</artifactId>
-								</path>
-							</annotationProcessorPaths>
-						</configuration>
-					</execution>
-				</executions>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-maven-plugin</artifactId>
+				<version>0.0.8</version>
+				<configuration>
+					<mainClass>souris.botdealer.BotDealerApplication</mainClass>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 
+	<!-- jpackage ("package") and distributable ("portable") profiles are added in Phase 2. -->
 </project>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Test logging: console only, no file appender, so unit tests never touch the user data folder. -->
+<configuration>
+	<conversionRule conversionWord="mask" class="souris.botdealer.logging.TokenMaskingConverter"/>
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %mask(%msg%ex)%n</pattern>
+		</encoder>
+	</appender>
+	<root level="WARN">
+		<appender-ref ref="CONSOLE"/>
+	</root>
+</configuration>

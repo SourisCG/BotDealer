@@ -37,6 +37,6 @@ build/
 .vscode/
 
 
-# files
-application.properties
-!application.properties.example
+# BotDealer configuration is committed because it contains NO secrets (local H2, empty password).
+# The Discord/YouTube tokens live in the OS keychain, never in a properties file.
+# Local overrides: drop your own application.properties in the app data folder (Phase 1).
