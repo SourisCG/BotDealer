@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+    fx:controller="souris.botdealer.ui.sections.DashboardController"
+    styleClass="section-root" spacing="14">
+    <padding>
+        <Insets top="26" right="30" bottom="26" left="30"/>
+    </padding>
+    <Label fx:id="titleLabel" styleClass="section-title"/>
+    <Label fx:id="welcomeLabel" styleClass="section-body" wrapText="true"/>
+
+    <GridPane hgap="14" vgap="12" styleClass="card-grid">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="50"/>
+            <ColumnConstraints percentWidth="50"/>
+        </columnConstraints>
+        <VBox styleClass="card" spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <Label text="%dashboard.card.bot" styleClass="card-title"/>
+            <Label fx:id="botValue" styleClass="card-value" wrapText="true"/>
+        </VBox>
+        <VBox styleClass="card" spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <Label text="%dashboard.card.currency" styleClass="card-title"/>
+            <Label fx:id="currencyValue" styleClass="card-value" wrapText="true"/>
+        </VBox>
+        <VBox styleClass="card" spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="1">
+            <Label text="%dashboard.card.engine" styleClass="card-title"/>
+            <Label fx:id="engineValue" styleClass="card-value" wrapText="true"/>
+        </VBox>
+        <VBox styleClass="card" spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <Label text="%dashboard.card.tts" styleClass="card-title"/>
+            <Label fx:id="ttsValue" styleClass="card-value" wrapText="true"/>
+        </VBox>
+    </GridPane>
+
+    <VBox styleClass="card" spacing="6">
+        <Label text="%dashboard.card.dataFolder" styleClass="card-title"/>
+        <Label fx:id="dataFolderValue" styleClass="card-value" wrapText="true"/>
+    </VBox>
+
+    <Label fx:id="nextStepsLabel" styleClass="note-label" wrapText="true"/>
+</VBox>

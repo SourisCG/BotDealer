@@ -1,50 +1,291 @@
 /*
  * BotDealer design system - reusable components (GPL-3.0, see LICENSE).
  */
-.welcome-label {
-	-fx-text-fill: -ink;
-	-fx-font-size: 26px;
-	-fx-font-weight: bold;
+
+/* ---------------------------------------------------------------- wizard */
+
+.wizard-root {
+	-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, -brand-green 0%, -brand-purple 62%);
 }
 
-.info-label {
-	-fx-text-fill: -ink-dim;
-	-fx-font-size: 13px;
-	-fx-wrap-text: true;
-	-fx-text-alignment: center;
-}
-
-.phase-label {
+.step-indicator {
 	-fx-text-fill: -brand-green-pale;
 	-fx-font-size: 12px;
-	-fx-font-style: italic;
+	-fx-font-weight: bold;
 }
 
-.primary-button {
-	-fx-background-color: -brand-teal;
-	-fx-text-fill: white;
-	-fx-font-size: 15px;
+.wizard-title {
+	-fx-text-fill: -ink;
+	-fx-font-size: 25px;
 	-fx-font-weight: bold;
-	-fx-padding: 10px 28px;
-	-fx-background-radius: 6px;
+}
+
+.wizard-subtitle {
+	-fx-text-fill: -ink-dim;
+	-fx-font-size: 13px;
+}
+
+.step-pane {
+	-fx-padding: 4px 2px 4px 2px;
+}
+
+.step-body {
+	-fx-text-fill: -ink-dim;
+	-fx-font-size: 13px;
+	-fx-line-spacing: 3px;
+}
+
+.card {
+	-fx-background-color: -surface;
+	-fx-background-radius: 10px;
+	-fx-padding: 16px;
+	-fx-border-color: -line;
+	-fx-border-radius: 10px;
+	-fx-border-width: 1px;
+}
+
+.card-danger {
+	-fx-border-color: -danger;
+}
+
+.card-title {
+	-fx-text-fill: -brand-green-pale;
+	-fx-font-size: 13px;
+	-fx-font-weight: bold;
+}
+
+.card-value {
+	-fx-text-fill: -ink;
+	-fx-font-size: 14px;
+}
+
+.field-label {
+	-fx-text-fill: -ink-dim;
+	-fx-font-size: 12px;
+}
+
+.option-radio {
+	-fx-text-fill: -ink;
+	-fx-font-size: 14px;
+}
+
+.option-detail {
+	-fx-text-fill: -ink-dim;
+	-fx-font-size: 12px;
+	-fx-padding: 0 0 0 24px;
+}
+
+.note-label {
+	-fx-text-fill: -ink-dim;
+	-fx-font-size: 12px;
+}
+
+.result-label {
+	-fx-text-fill: -warn;
+	-fx-font-size: 12px;
+}
+
+.result-ok {
+	-fx-text-fill: -brand-green;
+	-fx-font-size: 12px;
+	-fx-font-weight: bold;
+}
+
+.summary-key {
+	-fx-text-fill: -ink-dim;
+	-fx-font-size: 12px;
+	-fx-min-width: 130px;
+}
+
+.summary-value {
+	-fx-text-fill: -ink;
+	-fx-font-size: 12px;
+}
+
+.status-label {
+	-fx-text-fill: -ink-dim;
+	-fx-font-size: 12px;
+}
+
+.wizard-footer {
+	-fx-padding: 8px 0 0 0;
+}
+
+/* ---------------------------------------------------------------- shell */
+
+.shell-root {
+	-fx-background-color: -brand-purple-deep;
+}
+
+.sidebar {
+	-fx-background-color: -surface;
+	-fx-min-width: 210px;
+	-fx-pref-width: 210px;
+}
+
+.sidebar-brand {
+	-fx-text-fill: -ink;
+	-fx-font-size: 19px;
+	-fx-font-weight: bold;
+}
+
+.sidebar-tagline {
+	-fx-text-fill: -ink-dim;
+	-fx-font-size: 11px;
+}
+
+.sidebar-version {
+	-fx-text-fill: -ink-dim;
+	-fx-font-size: 10px;
+}
+
+.nav-button {
+	-fx-background-color: transparent;
+	-fx-text-fill: -ink-dim;
+	-fx-alignment: CENTER_LEFT;
+	-fx-padding: 9px 12px;
+	-fx-background-radius: 7px;
+	-fx-font-size: 13px;
 	-fx-cursor: hand;
 }
 
-.primary-button:disabled {
-	-fx-opacity: 0.6;
-}
-
-.progress-bar {
-	-fx-pref-width: 320px;
-}
-
-.progress-bar > .bar {
-	-fx-background-color: -brand-green;
-	-fx-background-insets: 0;
-	-fx-background-radius: 3px;
-}
-
-.progress-bar > .track {
+.nav-button:hover {
 	-fx-background-color: -surface-soft;
-	-fx-background-radius: 3px;
+	-fx-text-fill: -ink;
+}
+
+.nav-button:selected {
+	-fx-background-color: -brand-teal;
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+}
+
+.language-switcher {
+	-fx-padding: 6px 0 6px 0;
+}
+
+.lang-button {
+	-fx-background-color: -surface-soft;
+	-fx-text-fill: -ink-dim;
+	-fx-font-size: 11px;
+	-fx-padding: 4px 10px;
+	-fx-background-radius: 5px;
+	-fx-cursor: hand;
+}
+
+.lang-button:selected {
+	-fx-background-color: -brand-green;
+	-fx-text-fill: -brand-purple-deep;
+	-fx-font-weight: bold;
+}
+
+.status-bar {
+	-fx-background-color: -surface-soft;
+	-fx-padding: 7px 18px;
+	-fx-border-color: -line;
+	-fx-border-width: 0 0 1px 0;
+}
+
+.status-bar .label {
+	-fx-text-fill: -ink-dim;
+	-fx-font-size: 11px;
+}
+
+/* ---------------------------------------------------------------- sections */
+
+.section-root {
+	-fx-background-color: -brand-purple-deep;
+}
+
+.section-title {
+	-fx-text-fill: -ink;
+	-fx-font-size: 21px;
+	-fx-font-weight: bold;
+}
+
+.section-body {
+	-fx-text-fill: -ink-dim;
+	-fx-font-size: 13px;
+	-fx-line-spacing: 3px;
+}
+
+.phase-badge {
+	-fx-background-color: -surface-soft;
+	-fx-text-fill: -brand-green;
+	-fx-font-size: 11px;
+	-fx-padding: 4px 10px;
+	-fx-background-radius: 20px;
+	-fx-max-width: 260px;
+}
+
+.card-grid {
+	-fx-padding: 4px 0 0 0;
+}
+
+/* ---------------------------------------------------------------- controls */
+
+.button {
+	-fx-cursor: hand;
+}
+
+.secondary-button {
+	-fx-background-color: -surface-soft;
+	-fx-text-fill: -ink;
+	-fx-font-size: 13px;
+	-fx-padding: 8px 16px;
+	-fx-background-radius: 6px;
+	-fx-border-color: -line;
+	-fx-border-radius: 6px;
+	-fx-border-width: 1px;
+}
+
+.secondary-button:hover {
+	-fx-background-color: -line;
+}
+
+.danger-button {
+	-fx-background-color: -danger;
+	-fx-text-fill: white;
+	-fx-font-size: 13px;
+	-fx-font-weight: bold;
+	-fx-padding: 8px 16px;
+	-fx-background-radius: 6px;
+}
+
+.danger-button:hover {
+	-fx-opacity: 0.85;
+}
+
+.text-field, .password-field, .combo-box, .spinner {
+	-fx-background-color: -brand-purple-deep;
+	-fx-text-fill: -ink;
+	-fx-prompt-text-fill: -ink-dim;
+	-fx-background-radius: 6px;
+	-fx-border-color: -line;
+	-fx-border-radius: 6px;
+	-fx-border-width: 1px;
+	-fx-padding: 6px 8px;
+}
+
+.text-field:focused, .password-field:focused {
+	-fx-border-color: -brand-green;
+}
+
+.check-box, .radio-button {
+	-fx-text-fill: -ink;
+}
+
+.hyperlink {
+	-fx-text-fill: -brand-green;
+	-fx-border-color: transparent;
+}
+
+.hyperlink:hover {
+	-fx-text-fill: -brand-green-pale;
+}
+
+.tooltip {
+	-fx-background-color: -surface;
+	-fx-text-fill: -ink;
+	-fx-font-size: 12px;
 }

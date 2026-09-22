@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+    fx:controller="souris.botdealer.ui.sections.AboutController"
+    styleClass="section-root" spacing="14">
+    <padding>
+        <Insets top="26" right="30" bottom="26" left="30"/>
+    </padding>
+    <Label fx:id="titleLabel" styleClass="section-title"/>
+    <Label fx:id="versionLabel" styleClass="card-value"/>
+    <Hyperlink fx:id="projectLink"/>
+
+    <VBox styleClass="card" spacing="8">
+        <Label fx:id="licenseTitle" styleClass="card-title"/>
+        <Label fx:id="licenseBody" styleClass="section-body" wrapText="true"/>
+    </VBox>
+
+    <VBox styleClass="card" spacing="8">
+        <Label fx:id="creditsTitle" styleClass="card-title"/>
+        <Label fx:id="creditsBody" styleClass="section-body" wrapText="true"/>
+    </VBox>
+</VBox>

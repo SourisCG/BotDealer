@@ -22,6 +22,10 @@ import souris.botdealer.i18n.I18nService;
 @Component
 public class FxViewLoader {
 
+	/** A loaded view plus its Spring-managed controller. */
+	public record LoadedView(Parent root, Object controller) {
+	}
+
 	private final ApplicationContext context;
 	private final I18nService i18n;
 
@@ -35,6 +39,10 @@ public class FxViewLoader {
 	 * @return the loaded root node with its controller already injected
 	 */
 	public Parent load(String fxmlPath) {
+		return loadWithController(fxmlPath).root();
+	}
+
+	public LoadedView loadWithController(String fxmlPath) {
 		URL location = FxViewLoader.class.getResource(fxmlPath);
 		if (location == null) {
 			throw new IllegalArgumentException("FXML not found on classpath: " + fxmlPath);
@@ -42,7 +50,8 @@ public class FxViewLoader {
 		FXMLLoader loader = new FXMLLoader(location, i18n.getBundle());
 		loader.setControllerFactory(context::getBean);
 		try {
-			return loader.load();
+			Parent root = loader.load();
+			return new LoadedView(root, loader.getController());
 		} catch (IOException e) {
 			throw new UncheckedIOException("Cannot load FXML: " + fxmlPath, e);
 		}

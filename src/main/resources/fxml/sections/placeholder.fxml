@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+    fx:controller="souris.botdealer.ui.sections.PlaceholderController"
+    styleClass="section-root" spacing="12">
+    <padding>
+        <Insets top="26" right="30" bottom="26" left="30"/>
+    </padding>
+    <Label fx:id="sectionTitle" styleClass="section-title" wrapText="true"/>
+    <Label fx:id="sectionBody" styleClass="section-body" wrapText="true"/>
+    <Label fx:id="sectionPhase" styleClass="phase-badge"/>
+</VBox>

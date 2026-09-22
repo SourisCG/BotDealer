@@ -17,6 +17,8 @@
 	-surface: #241344;
 	-surface-soft: #322058;
 	-line: #4a3670;
+	-danger: #c0392b;
+	-warn: #f0a500;
 
 	-fx-font-family: "System";
 }

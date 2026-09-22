@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Main application shell: sidebar navigation, status bar, swappable content. -->
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+    fx:controller="souris.botdealer.ui.shell.MainShellController"
+    styleClass="shell-root">
+    <left>
+        <VBox fx:id="sidebar" styleClass="sidebar" spacing="6">
+            <padding>
+                <Insets top="18" right="12" bottom="14" left="12"/>
+            </padding>
+            <Label text="%app.title" styleClass="sidebar-brand"/>
+            <Label text="%app.tagline" styleClass="sidebar-tagline" wrapText="true"/>
+            <VBox fx:id="navBox" spacing="4">
+                <VBox.margin>
+                    <Insets top="14"/>
+                </VBox.margin>
+            </VBox>
+            <Region VBox.vgrow="ALWAYS"/>
+            <HBox spacing="6" alignment="CENTER_LEFT" styleClass="language-switcher">
+                <Button fx:id="languageEnButton" text="EN" onAction="#switchToEnglish" styleClass="lang-button"/>
+                <Button fx:id="languageEsButton" text="ES" onAction="#switchToSpanish" styleClass="lang-button"/>
+            </HBox>
+            <Label fx:id="versionLabel" styleClass="sidebar-version"/>
+        </VBox>
+    </left>
+    <center>
+        <VBox>
+            <HBox fx:id="statusBar" styleClass="status-bar" spacing="20" alignment="CENTER_LEFT">
+                <Label fx:id="botStatusLabel"/>
+                <Label fx:id="engineStatusLabel"/>
+                <Label fx:id="currencyStatusLabel"/>
+                <Label fx:id="storageStatusLabel"/>
+            </HBox>
+            <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </center>
+</BorderPane>
