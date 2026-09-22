@@ -1,0 +1,180 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build, without the leading v (dry run: nothing is published)'
+        required: true
+        default: '0.0.0-dryrun'
+
+permissions:
+  contents: write
+
+env:
+  APP_NAME: BotDealer
+
+jobs:
+  linux:
+    name: Linux packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up JDK 25
+        uses: actions/setup-java@v6
+        with:
+          java-version: '25'
+          distribution: temurin
+          cache: maven
+
+      - name: Resolve version
+        id: ver
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Building $APP_NAME $VERSION"
+
+      # jpackage shells out to rpmbuild for .rpm and to fakeroot/dpkg-deb for .deb.
+      - name: Install packaging tools
+        run: sudo apt-get update && sudo apt-get install -y rpm fakeroot
+
+      - name: Align the project version with the release
+        run: mvn -B -ntp versions:set -DnewVersion=${{ steps.ver.outputs.version }} -DgenerateBackupPoms=false
+
+      - name: Build .rpm
+        run: mvn -B -ntp -Ppackage -Djpackage.type=rpm -Djpackage.dest=target/dist/rpm package -DskipTests
+      - name: Build .deb
+        run: mvn -B -ntp -Ppackage -Djpackage.type=deb -Djpackage.dest=target/dist/deb package -DskipTests
+      - name: Build portable application image
+        run: mvn -B -ntp -Ppackage -Djpackage.type=app-image -Djpackage.dest=target/dist/app-image package -DskipTests
+
+      - name: Self-test the packaged image
+        run: ./target/dist/app-image/BotDealer/bin/BotDealer --self-test
+
+      - name: Build portable jar (requires Java 25 on the target machine)
+        run: mvn -B -ntp package -DskipTests
+
+      - name: Collect artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          V="${{ steps.ver.outputs.version }}"
+          mkdir -p out
+          cp target/dist/rpm/*.rpm out/
+          cp target/dist/deb/*.deb out/
+          tar -C target/dist/app-image -czf "out/$APP_NAME-$V-linux-app-image.tar.gz" BotDealer
+          cp target/botdealer-*.jar "out/botdealer-$V.jar"
+          ls -lh out
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: linux
+          path: out/*
+          if-no-files-found: error
+
+  windows:
+    name: Windows installer
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up JDK 25
+        uses: actions/setup-java@v6
+        with:
+          java-version: '25'
+          distribution: temurin
+          cache: maven
+
+      - name: Resolve version
+        id: ver
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      # windows-latest already ships WiX Toolset 3.x, which jpackage needs for .exe
+      # installers. This is a safety net in case a future image drops it.
+      - name: Ensure WiX Toolset
+        shell: bash
+        run: choco install wixtoolset --no-progress -y || echo "WiX already present"
+
+      - name: Align the project version with the release
+        shell: bash
+        run: mvn -B -ntp versions:set -DnewVersion=${{ steps.ver.outputs.version }} -DgenerateBackupPoms=false
+
+      - name: Build .exe installer
+        shell: bash
+        run: mvn -B -ntp -Ppackage -Djpackage.type=exe -Djpackage.dest=target/dist/exe package -DskipTests
+      - name: Build portable application image
+        shell: bash
+        run: mvn -B -ntp -Ppackage -Djpackage.type=app-image -Djpackage.dest=target/dist/app-image package -DskipTests
+
+      - name: Self-test the packaged image
+        shell: bash
+        run: ./target/dist/app-image/BotDealer/BotDealer.exe --self-test
+
+      - name: Collect artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          V="${{ steps.ver.outputs.version }}"
+          mkdir -p out
+          cp target/dist/exe/*.exe out/
+          ZIP="out/$APP_NAME-$V-windows-app-image.zip"
+          if command -v 7z > /dev/null 2>&1; then
+            (cd target/dist/app-image && 7z a -tzip "../../$ZIP" BotDealer > /dev/null)
+          else
+            powershell -NoProfile -Command "Compress-Archive -Path 'target/dist/app-image/BotDealer' -DestinationPath '$ZIP' -Force"
+          fi
+          ls -lh out
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: windows
+          path: out/*
+          if-no-files-found: error
+
+  publish:
+    name: Publish release
+    needs: [linux, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          merge-multiple: true
+          path: dist
+
+      - name: Generate checksums
+        working-directory: dist
+        run: |
+          set -euo pipefail
+          ls -lh
+          sha256sum ./* > SHA256SUMS
+          cat SHA256SUMS
+
+      # Only real tags are published; workflow_dispatch runs stay as downloadable
+      # artifacts so a dry run can be inspected without creating a release.
+      - name: Publish GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v3
+        with:
+          files: dist/*
+          fail_on_unmatched_files: true
+          generate_release_notes: true
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        with:
+          name: release-dry-run
+          path: dist/*
+          if-no-files-found: error

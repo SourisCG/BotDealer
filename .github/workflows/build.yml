@@ -11,12 +11,28 @@ jobs:
     name: Build + unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up JDK 25
         uses: actions/setup-java@v6
         with:
           java-version: '25'
-          distribution: 'temurin'
+          distribution: temurin
           cache: maven
       - name: Verify
         run: mvn -B -ntp verify
+
+  package-check:
+    name: Package + self-test (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up JDK 25
+        uses: actions/setup-java@v6
+        with:
+          java-version: '25'
+          distribution: temurin
+          cache: maven
+      - name: Build application image
+        run: mvn -B -ntp -Ppackage -Djpackage.type=app-image -Djpackage.dest=target/dist/app-image package -DskipTests
+      - name: Self-test the packaged image
+        run: ./target/dist/app-image/BotDealer/bin/BotDealer --self-test

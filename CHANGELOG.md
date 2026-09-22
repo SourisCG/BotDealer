@@ -5,6 +5,14 @@ All notable changes to BotDealer are documented here. Format follows Keep a Chan
 ## [Unreleased]
 
 ### Added
+- Phase 2d: GitHub Actions pipelines.
+  - `build.yml` runs the unit tests on every push/PR and additionally packages a Linux
+    application image and runs `--self-test` on it, so packaging regressions fail fast.
+  - `release.yml` triggers on `v*` tags (and `workflow_dispatch` for dry runs): it
+    aligns the project version with the tag, builds `.rpm` + `.deb` + Linux app image +
+    portable jar on Ubuntu and `.exe` + Windows app image on Windows, self-tests both
+    images, generates `SHA256SUMS` and publishes the GitHub release.
+  - Dry runs never publish a release; they stay as downloadable workflow artifacts.
 - Phase 2c: `--self-test` headless verification, run by CI on every packaged build.
   It boots Spring without JavaFX and checks the data folder, the database, the
   translations, the credential backend, the bundled assets and the native libraries
