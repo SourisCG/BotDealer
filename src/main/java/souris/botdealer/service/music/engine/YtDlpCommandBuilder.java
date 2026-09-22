@@ -26,8 +26,16 @@ public final class YtDlpCommandBuilder {
 	/** Audio-only format selector; WebM/Opus is what Discord wants. */
 	public static final String FORMAT = "bestaudio[ext=webm]/bestaudio/best";
 
-	/** The remote code-fetching escape hatch is never used. */
-	public static final String NO_REMOTE_COMPONENTS = "ejs:none";
+	/**
+	 * Where yt-dlp gets its JavaScript challenge solver.
+	 *
+	 * <p>Since late 2025 yt-dlp needs a solver to answer YouTube's {@code n} challenge, and
+	 * it only fetches it when asked. Blocking the fetch ({@code ejs:none}) leaves the engine
+	 * able to play only the formats that need no challenge, so the official component is
+	 * enabled instead: yt-dlp downloads it from its own release page and runs it inside the
+	 * bundled Deno runtime. Documented in SECURITY.md.</p>
+	 */
+	public static final String REMOTE_COMPONENTS = "ejs:github";
 
 	private YtDlpCommandBuilder() {
 	}
@@ -51,7 +59,7 @@ public final class YtDlpCommandBuilder {
 			args.add(paths.ejsDir().toString());
 		}
 		args.add("--remote-components");
-		args.add(NO_REMOTE_COMPONENTS);
+		args.add(REMOTE_COMPONENTS);
 	}
 
 	/**

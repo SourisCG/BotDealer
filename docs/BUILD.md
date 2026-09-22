@@ -59,7 +59,25 @@ mvn -Ppackage -Djpackage.type=rpm -Djpackage.home=/opt/jdk-25 package
 1. `maven-jar-plugin` writes the **plain** application jar (the Spring Boot fat jar is
    skipped: jpackage needs a normal classpath jar, not nested jars).
 2. `maven-dependency-plugin` copies every runtime dependency next to it in `target/app`.
-3. `jpackage` builds a jlink runtime and a native launcher, then bundles `target/app`.
+3. `AssetFetcher` (run through `exec:java`, reusing the app's own download code) fills
+   `target/app/voices` and `target/app/engines` with the assets the installer ships:
+   three Piper voices, yt-dlp and Deno. Files that are already there are left alone, so a
+   CI cache hit costs nothing. Skip it with `-Dskip.assets=true` for a small installer
+   that downloads the engines on demand instead.
+4. `jpackage` builds a jlink runtime and a native launcher, then bundles `target/app`.
+
+### Installer size
+
+| Content | Approximate size |
+|---|---|
+| Java runtime (jlink) + application + dependencies | ~250 MB |
+| Three Piper voices | ~208 MB |
+| yt-dlp + Deno | ~120 MB |
+| **Total application image** | **~650 MB** |
+
+This is the cost of the "the user installs nothing" requirement: offline speech and a
+self-contained music engine, both bundled. `-Dskip.assets=true` builds a ~250 MB
+installer instead, which downloads the engines and voices on first use.
 
 JavaFX is loaded from the **classpath** (the platform classifier jars Maven already
 resolved). That works as of JavaFX 25 because the main class is deliberately *not* a

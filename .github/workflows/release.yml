@@ -45,6 +45,14 @@ jobs:
       - name: Install packaging tools
         run: sudo apt-get update && sudo apt-get install -y rpm fakeroot
 
+      - name: Cache bundled assets
+        uses: actions/cache@v6
+        with:
+          path: |
+            target/app/voices
+            target/app/engines
+          key: bundled-assets-${{ runner.os }}-${{ hashFiles('src/main/resources/tts/voices-catalog.json', 'src/main/java/souris/botdealer/service/music/engine/EngineAssets.java') }}
+
       - name: Align the project version with the release
         run: mvn -B -ntp versions:set -DnewVersion=${{ steps.ver.outputs.version }} -DgenerateBackupPoms=false
 
@@ -107,6 +115,14 @@ jobs:
       - name: Ensure WiX Toolset
         shell: bash
         run: choco install wixtoolset --no-progress -y || echo "WiX already present"
+
+      - name: Cache bundled assets
+        uses: actions/cache@v6
+        with:
+          path: |
+            target/app/voices
+            target/app/engines
+          key: bundled-assets-${{ runner.os }}-${{ hashFiles('src/main/resources/tts/voices-catalog.json', 'src/main/java/souris/botdealer/service/music/engine/EngineAssets.java') }}
 
       - name: Align the project version with the release
         shell: bash

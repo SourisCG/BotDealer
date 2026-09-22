@@ -41,6 +41,11 @@ public final class SelfTest {
 
 	private final List<String> failures = new ArrayList<>();
 	private final List<String> warnings = new ArrayList<>();
+	private final souris.botdealer.service.music.engine.EngineInstaller engines =
+		new souris.botdealer.service.music.engine.EngineInstaller(new souris.botdealer.config.BundledAssets());
+	private final souris.botdealer.service.tts.VoiceRegistry voiceRegistry =
+		new souris.botdealer.service.tts.VoiceRegistry(new souris.botdealer.config.BundledAssets(),
+			com.fasterxml.jackson.databind.json.JsonMapper.builder().build());
 
 	private SelfTest() {
 	}
@@ -146,10 +151,29 @@ public final class SelfTest {
 	}
 
 	private void checkBundledAssets() {
+		// Seed first, exactly like a real first launch would, then report what landed.
+		try {
+			engines.seedFromBundle();
+		} catch (Exception e) {
+			warn("Could not seed the bundled engines: " + rootCause(e));
+		}
 		Path voices = AppPaths.dataDir().resolve("voices");
-		Path engines = AppPaths.dataDir().resolve("engines");
+		Path enginesDir = AppPaths.dataDir().resolve("engines");
 		reportAsset("voices", voices);
-		reportAsset("music engines", engines);
+		reportAsset("music engines", enginesDir);
+		reportVoiceCount();
+	}
+
+	/** Loads the registry so the seeded voices are parsed, not just present. */
+	private void reportVoiceCount() {
+		try {
+			int count = voiceRegistry.voices().size();
+			if (count > 0) {
+				pass("Voice registry parsed " + count + " voice(s)");
+			}
+		} catch (Exception e) {
+			warn("Could not read the voice registry: " + rootCause(e));
+		}
 	}
 
 	private void reportAsset(String label, Path directory) {

@@ -113,10 +113,10 @@ class YtDlpTargetsTest {
 
 		assertTrue(args.contains("--ignore-config"), "a user config must not change behaviour");
 		assertTrue(args.contains("--remote-components"));
-		assertEquals(YtDlpCommandBuilder.NO_REMOTE_COMPONENTS, args.get(args.indexOf("--remote-components") + 1),
-			"yt-dlp must never fetch and execute remote components");
+		assertEquals(YtDlpCommandBuilder.REMOTE_COMPONENTS, args.get(args.indexOf("--remote-components") + 1),
+			"the official challenge solver must be enabled, or most formats are unavailable");
 		assertTrue(args.contains("--js-runtimes"), "the bundled JS runtime must be passed explicitly");
-		assertTrue(args.contains("--plugin-dirs"), "the pre-bundled solver must be passed explicitly");
+		assertTrue(args.contains("--plugin-dirs"), "the pre-bundled solver directory must be passed");
 		assertTrue(args.contains("--extractor-args"));
 		assertEquals(YtDlpCommandBuilder.CLIENTS, args.get(args.indexOf("--extractor-args") + 1),
 			"clients without a PO-token requirement must be preferred");

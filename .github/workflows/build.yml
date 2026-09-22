@@ -32,6 +32,14 @@ jobs:
           java-version: '25'
           distribution: temurin
           cache: maven
+      - name: Cache bundled assets
+        uses: actions/cache@v6
+        with:
+          path: |
+            target/app/voices
+            target/app/engines
+          key: bundled-assets-${{ runner.os }}-${{ hashFiles('src/main/resources/tts/voices-catalog.json', 'src/main/java/souris/botdealer/service/music/engine/EngineAssets.java') }}
+
       - name: Build application image
         run: mvn -B -ntp -Ppackage -Djpackage.type=app-image -Djpackage.dest=target/dist/app-image package -DskipTests
       - name: Self-test the packaged image

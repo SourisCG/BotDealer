@@ -40,13 +40,6 @@ public class EngineUpdater {
 
 	private static final Logger log = LoggerFactory.getLogger(EngineUpdater.class);
 
-	private static final String YTDLP_RELEASE_API =
-		"https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest";
-	private static final String YTDLP_DOWNLOAD_BASE =
-		"https://github.com/yt-dlp/yt-dlp/releases/latest/download/";
-	private static final String DENO_RELEASE_API =
-		"https://api.github.com/repos/denoland/deno/releases/latest";
-
 	/** Outcome of an update attempt, ready to be shown in the Music screen. */
 	public record UpdateResult(Status status, String detail) {
 
@@ -76,16 +69,16 @@ public class EngineUpdater {
 	// ------------------------------------------------------------------ yt-dlp
 
 	public UpdateResult updateYtDlp() {
-		Optional<String> assetName = ytDlpAssetName();
+		Optional<String> assetName = EngineAssets.ytDlpAssetName();
 		if (assetName.isEmpty()) {
 			return new UpdateResult(UpdateResult.Status.UNSUPPORTED_PLATFORM, System.getProperty("os.arch", ""));
 		}
 		Path target = installer.enginesDir().resolve(installer.ytDlpFileName());
 		try {
 			Path temp = Files.createTempDirectory("botdealer-update").resolve(assetName.get());
-			fetcher.download(YTDLP_DOWNLOAD_BASE + assetName.get(), temp);
+			fetcher.download(EngineAssets.ytDlpDownloadUrl(assetName.get()), temp);
 
-			String sums = fetcher.getText(YTDLP_DOWNLOAD_BASE + "SHA2-256SUMS");
+			String sums = fetcher.getText(EngineAssets.YTDLP_DOWNLOAD_BASE + "SHA2-256SUMS");
 			Optional<String> expected = Checksum.expectedFor(sums, assetName.get());
 			if (expected.isEmpty()) {
 				Files.deleteIfExists(temp);
@@ -113,7 +106,7 @@ public class EngineUpdater {
 	 * extracted, because that is what the published checksum covers.
 	 */
 	public UpdateResult updateDeno() {
-		Optional<String> assetName = denoAssetName();
+		Optional<String> assetName = EngineAssets.denoAssetName();
 		if (assetName.isEmpty()) {
 			return new UpdateResult(UpdateResult.Status.UNSUPPORTED_PLATFORM, System.getProperty("os.arch", ""));
 		}
@@ -121,7 +114,8 @@ public class EngineUpdater {
 		try {
 			Path tempDir = Files.createTempDirectory("botdealer-deno");
 			Path archive = tempDir.resolve(assetName.get());
-			String url = denoDownloadUrl(assetName.get()).orElse(null);
+			String url = EngineAssets.denoDownloadUrl(fetcher.getText(EngineAssets.DENO_RELEASE_API), assetName.get())
+				.orElse(null);
 			if (url == null) {
 				return new UpdateResult(UpdateResult.Status.DOWNLOAD_FAILED, "no asset url");
 			}
@@ -213,57 +207,5 @@ public class EngineUpdater {
 			}
 		}
 		return null;
-	}
-
-	private Optional<String> ytDlpAssetName() {
-		String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
-		String arch = System.getProperty("os.arch", "").toLowerCase(Locale.ROOT);
-		if (os.contains("win")) {
-			return Optional.of("yt-dlp.exe");
-		}
-		if (os.contains("mac")) {
-			return Optional.of("yt-dlp_macos");
-		}
-		if (os.contains("linux")) {
-			return Optional.of(arch.contains("aarch64") || arch.contains("arm") ? "yt-dlp_linux_aarch64"
-				: "yt-dlp_linux");
-		}
-		return Optional.empty();
-	}
-
-	private Optional<String> denoAssetName() {
-		String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
-		String arch = System.getProperty("os.arch", "").toLowerCase(Locale.ROOT);
-		boolean arm = arch.contains("aarch64") || arch.contains("arm");
-		if (os.contains("win")) {
-			return Optional.of(arm ? "deno-aarch64-pc-windows-msvc.zip" : "deno-x86_64-pc-windows-msvc.zip");
-		}
-		if (os.contains("mac")) {
-			return Optional.of(arm ? "deno-aarch64-apple-darwin.zip" : "deno-x86_64-apple-darwin.zip");
-		}
-		if (os.contains("linux")) {
-			return Optional.of(arm ? "deno-aarch64-unknown-linux-gnu.zip" : "deno-x86_64-unknown-linux-gnu.zip");
-		}
-		return Optional.empty();
-	}
-
-	private Optional<String> denoDownloadUrl(String assetName) {
-		try {
-			String json = fetcher.getText(DENO_RELEASE_API);
-			// Tiny targeted parse: the release JSON lists asset names and download URLs.
-			int nameIndex = json.indexOf("\"name\":\"" + assetName + "\"");
-			if (nameIndex < 0) {
-				return Optional.empty();
-			}
-			int urlIndex = json.indexOf("\"browser_download_url\":\"", nameIndex);
-			if (urlIndex < 0) {
-				return Optional.empty();
-			}
-			int start = urlIndex + "\"browser_download_url\":\"".length();
-			int end = json.indexOf('"', start);
-			return end > start ? Optional.of(json.substring(start, end)) : Optional.empty();
-		} catch (IOException e) {
-			return Optional.empty();
-		}
 	}
 }

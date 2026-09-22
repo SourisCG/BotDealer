@@ -117,6 +117,8 @@
 			<id>package</id>
 			<properties>
 				<jpackage.type>app-image</jpackage.type>
+				<!-- -Dskip.assets=true builds a small installer without the bundled voices/engines. -->
+				<skip.assets>false</skip.assets>
 			</properties>
 			<build>
 				<plugins>
@@ -176,10 +178,30 @@
 							</execution>
 						</executions>
 					</plugin>
+					<!--
+						Downloads the bundled Piper voices and the yt-dlp/Deno binaries into the
+						jpackage input, so the installers are self-contained. Skippable with
+						-Dskip.assets=true; already-present files are left alone, which makes a CI
+						cache hit free.
+					-->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
 						<executions>
+							<execution>
+								<id>download-bundled-assets</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<skip>${skip.assets}</skip>
+									<mainClass>souris.botdealer.diagnostics.AssetFetcher</mainClass>
+									<arguments>
+										<argument>${jpackage.input}</argument>
+									</arguments>
+								</configuration>
+							</execution>
 							<execution>
 								<id>jpackage</id>
 								<phase>package</phase>
