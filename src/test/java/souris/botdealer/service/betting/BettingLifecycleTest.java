@@ -417,7 +417,8 @@ class BettingLifecycleTest {
 		BetEvent expired = parimutuelEvent("A", "B");
 		backdateClosingTime(expired);
 
-		assertEquals(1, events.closeExpired(), "only the backdated event should close");
+		assertEquals(List.of(expired.getId()), events.closeExpired(),
+			"only the backdated event should close");
 		assertEquals(EventStatus.CLOSED, eventRepository.findById(expired.getId()).orElseThrow().getStatus());
 	}
 

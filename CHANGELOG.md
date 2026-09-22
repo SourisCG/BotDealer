@@ -2,6 +2,26 @@
 
 All notable changes to BotDealer are documented here. Format follows Keep a Changelog (Unreleased / versions).
 
+- Phase 3c: Discord bot and slash commands.
+  - `DiscordBotService` owns the JDA session: connect/disconnect/restart, status
+    reported to the UI, token read from the keychain at connect time and never stored
+    in a field or logged. Voice is configured with DAVE + the native send factory, and
+    if those natives cannot load the bot still connects with voice disabled instead of
+    refusing to start.
+  - `MESSAGE_CONTENT` is only requested when read-aloud TTS is on: asking for a
+    privileged intent that is disabled in the Developer Portal makes the whole login
+    fail, and the failure is explained in plain language.
+  - Commands are registered **per guild** on GuildReady, because guild commands appear
+    immediately while global ones can take an hour to propagate.
+  - Commands: `/botdealer help|ping|version`, `/chorizos balance|daily`,
+    `/bet place|list|mine`, `/event create|close|settle|cancel`,
+    `/economy give|remove|set`. Every reply is localized per guild, so a server can run
+    in Spanish while the operator's desktop stays in English.
+  - The live event card is posted and refreshed in the channel (pools, implied odds,
+    winner) and updated as bets arrive; results are announced.
+  - `BettingScheduler` closes expired events every 30 seconds.
+  - `BotPermissions` allows the guild owner, Manage Server/Administrator, or the
+    configured admin role. The app operator is deliberately not special-cased.
 - Phase 3b: betting and settlement.
   - `BettingMath` holds every payout rule as pure functions: pools, rake, parimutuel
     shares and fixed-odds payouts.
@@ -114,6 +134,11 @@ All notable changes to BotDealer are documented here. Format follows Keep a Chan
   and the broken `SpringApplication.run` + `Application.launch` ordering.
 
 ### Fixed
+- The i18n parity test was passing while translations were missing: `ResourceBundle`
+  falls back to the default bundle, so `keySet()` on the Spanish bundle reported the
+  English keys. The test now reads both `.properties` files as files and compares them,
+  and a new test reflects over `DiscordMessages` to prove every key the bot uses exists
+  in both languages.
 - JitPack was searched before Maven Central and answered for the GitHub-style group
   `io.github.jvoice-project`, shadowing the real 76 MB `piper-jni` jar with a 15 KB stub
   that contains no native libraries. Offline TTS would have been dead on arrival.

@@ -145,14 +145,18 @@ public class EventService {
 		});
 	}
 
-	/** Closes every open event whose betting window elapsed. @return how many were closed */
-	public int closeExpired() {
+	/**
+	 * Closes every open event whose betting window elapsed.
+	 *
+	 * @return the ids that were closed, so callers can announce them
+	 */
+	public List<Long> closeExpired() {
 		List<BetEvent> expired = events.findByStatusAndClosesAtBefore(EventStatus.OPEN, Instant.now());
-		int closed = 0;
+		List<Long> closed = new ArrayList<>();
 		for (BetEvent event : expired) {
 			try {
 				close(event.getId());
-				closed++;
+				closed.add(event.getId());
 			} catch (RuntimeException e) {
 				log.warn("Could not auto-close event {}: {}", event.getId(), e.toString());
 			}

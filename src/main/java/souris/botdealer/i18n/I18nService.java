@@ -34,6 +34,7 @@ public class I18nService {
 	private static final String BUNDLE_BASE = "i18n/messages";
 
 	private final ObjectProperty<Locale> locale = new SimpleObjectProperty<>(detectDefault());
+	private final java.util.Map<String, ResourceBundle> bundles = new java.util.concurrent.ConcurrentHashMap<>();
 	private volatile ResourceBundle bundle;
 
 	public I18nService() {
@@ -69,6 +70,28 @@ public class I18nService {
 
 	public ResourceBundle getBundle() {
 		return bundle;
+	}
+
+	/**
+	 * Looks a key up in a specific locale, for content that is not the UI language.
+	 *
+	 * <p>The Discord bot needs this: every guild can run in its own language while the
+	 * desktop window stays in the operator's language.</p>
+	 */
+	public String get(Locale target, String key, Object... args) {
+		ResourceBundle targetBundle = target == null
+			? bundle
+			: bundles.computeIfAbsent(target.getLanguage(), language -> loadBundle(Locale.of(language)));
+		String pattern;
+		try {
+			pattern = targetBundle.getString(key);
+		} catch (MissingResourceException e) {
+			return "!" + key + "!";
+		}
+		if (args == null || args.length == 0) {
+			return pattern;
+		}
+		return MessageFormat.format(pattern, args);
 	}
 
 	/** Looks up a key and formats it with {@link MessageFormat}; never throws. */
