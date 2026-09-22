@@ -42,6 +42,19 @@ public final class DiscordMessages {
 	public static final String CMD_ECONOMY_REMOVE = "discord.command.economy.remove";
 	public static final String CMD_ECONOMY_SET = "discord.command.economy.set";
 
+	// ---------------------------------------------------------------- music commands
+	public static final String CMD_PLAY = "discord.command.play";
+	public static final String CMD_PAUSE = "discord.command.pause";
+	public static final String CMD_RESUME = "discord.command.resume";
+	public static final String CMD_SKIP = "discord.command.skip";
+	public static final String CMD_STOP = "discord.command.stop";
+	public static final String CMD_QUEUE = "discord.command.queue";
+	public static final String CMD_NOWPLAYING = "discord.command.nowplaying";
+	public static final String CMD_VOLUME = "discord.command.volume";
+	public static final String CMD_LOOP = "discord.command.loop";
+	public static final String CMD_SHUFFLE = "discord.command.shuffle";
+	public static final String CMD_DISCONNECT = "discord.command.disconnect";
+
 	// ---------------------------------------------------------------- option names
 	public static final String OPT_USER = "discord.option.user";
 	public static final String OPT_EVENT = "discord.option.event";
@@ -58,6 +71,9 @@ public final class DiscordMessages {
 	public static final String OPT_CLOSES_IN = "discord.option.closesIn";
 	public static final String OPT_WINNER = "discord.option.winner";
 	public static final String OPT_ODDS = "discord.option.odds";
+	public static final String OPT_QUERY = "discord.option.query";
+	public static final String OPT_LEVEL = "discord.option.level";
+	public static final String OPT_LOOP_MODE = "discord.option.loopMode";
 
 	// ---------------------------------------------------------------- replies
 	public static final String REPLY_PING = "discord.reply.ping";
@@ -81,6 +97,7 @@ public final class DiscordMessages {
 	public static final String REPLY_ECONOMY_GIVEN = "discord.reply.economy.given";
 	public static final String REPLY_ECONOMY_REMOVED = "discord.reply.economy.removed";
 	public static final String REPLY_ECONOMY_SET = "discord.reply.economy.set";
+	public static final String REPLY_SEARCHING = "discord.reply.searching";
 
 	// ---------------------------------------------------------------- errors
 	public static final String ERROR_NOT_ADMIN = "discord.error.notAdmin";

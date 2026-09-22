@@ -37,7 +37,8 @@ class JavaTranslationsTest {
 		"sections", "about", "discord", "bet", "event", "ledger", "music", "bot");
 
 	private static final Pattern KEY_LITERAL = Pattern.compile(
-		"\"((?:" + String.join("|", NAMESPACES) + ")\\.[a-zA-Z][a-zA-Z0-9_.]*)\"");
+		"\"((?:" + String.join("|", NAMESPACES)
+		+ ")\\.[a-zA-Z][a-zA-Z0-9_]*(?:\\.[a-zA-Z0-9_]+)*)\"");
 
 	/** Literals that look like keys but are hostnames, e.g. {@code music.youtube.com}. */
 	private static final Pattern HOSTNAME = Pattern.compile(".*\\.(com|org|net|io|dev)$");

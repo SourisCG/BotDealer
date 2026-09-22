@@ -22,9 +22,11 @@ import souris.botdealer.service.discord.commands.EconomyAdminCommands;
 import souris.botdealer.service.discord.commands.EconomyCommands;
 import souris.botdealer.service.discord.commands.EventAdminCommands;
 import souris.botdealer.service.discord.commands.GeneralCommands;
+import souris.botdealer.service.discord.commands.MusicCommands;
 import souris.botdealer.service.economy.DailyRewardService;
 import souris.botdealer.service.economy.GuildConfigService;
 import souris.botdealer.service.economy.WalletService;
+import souris.botdealer.service.music.MusicService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -57,13 +59,16 @@ class CommandRegistryTest {
 			new EventAdminCommands(i18n, guildConfig, mock(EventService.class), mock(EventAnnouncer.class),
 				mock(BotPermissions.class), bus),
 			new EconomyAdminCommands(i18n, guildConfig, mock(WalletService.class), mock(BotPermissions.class),
-				bus));
+				bus),
+			new MusicCommands(i18n, guildConfig, mock(MusicService.class), mock(MusicAnnouncer.class)));
 		return new CommandRegistry(handlers);
 	}
 
 	@Test
 	void registersEveryExpectedRootCommand() {
-		assertEquals(List.of("bet", "botdealer", "chorizos", "economy", "event"), registry().names());
+		assertEquals(List.of("bet", "botdealer", "chorizos", "disconnect", "economy", "event", "loop",
+			"nowplaying", "pause", "play", "queue", "resume", "shuffle", "skip", "stop", "volume"),
+			registry().names().stream().sorted().toList());
 	}
 
 	@Test
@@ -79,6 +84,13 @@ class CommandRegistryTest {
 	@Test
 	void subcommandsAndOptionsRespectDiscordLimits() {
 		for (CommandData command : registry().commandData()) {
+			// Root commands without subcommands carry their options directly.
+			for (OptionData option : ((SlashCommandData) command).getOptions()) {
+				assertTrue(VALID_NAME.matcher(option.getName()).matches(),
+					"invalid option name: " + option.getName());
+				assertTrue(isValidDescription(option.getDescription()),
+					"invalid description for option " + option.getName());
+			}
 			for (SubcommandData subcommand : ((SlashCommandData) command).getSubcommands()) {
 				assertTrue(VALID_NAME.matcher(subcommand.getName()).matches(),
 					"invalid subcommand name: " + subcommand.getName());
@@ -99,6 +111,15 @@ class CommandRegistryTest {
 		// Discord requires required options to be listed first; a violation fails the
 		// whole registration.
 		for (CommandData command : registry().commandData()) {
+			boolean seenOptionalAtRoot = false;
+			for (OptionData option : ((SlashCommandData) command).getOptions()) {
+				if (!option.isRequired()) {
+					seenOptionalAtRoot = true;
+				} else {
+					assertFalse(seenOptionalAtRoot, "required option " + option.getName() + " in /"
+						+ command.getName() + " comes after an optional one");
+				}
+			}
 			for (SubcommandData subcommand : ((SlashCommandData) command).getSubcommands()) {
 				boolean seenOptional = false;
 				for (OptionData option : subcommand.getOptions()) {

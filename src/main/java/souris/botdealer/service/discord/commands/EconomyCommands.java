@@ -48,12 +48,12 @@ public class EconomyCommands extends AbstractCommandHandler {
 	}
 
 	@Override
-	public CommandData definition() {
-		return Commands.slash(ROOT, DiscordMessages.CMD_CHORIZOS)
+	public java.util.List<CommandData> definitions() {
+		return java.util.List.of(Commands.slash(ROOT, DiscordMessages.CMD_CHORIZOS)
 			.addSubcommands(
 				new SubcommandData("balance", DiscordMessages.CMD_CHORIZOS_BALANCE)
 					.addOptions(new OptionData(OptionType.USER, "user", DiscordMessages.OPT_USER, false)),
-				new SubcommandData("daily", DiscordMessages.CMD_CHORIZOS_DAILY));
+				new SubcommandData("daily", DiscordMessages.CMD_CHORIZOS_DAILY)));
 	}
 
 	@Override

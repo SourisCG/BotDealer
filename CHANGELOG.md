@@ -150,6 +150,10 @@ All notable changes to BotDealer are documented here. Format follows Keep a Chan
   and the broken `SpringApplication.run` + `Application.launch` ordering.
 
 ### Fixed
+- A circular dependency reappeared through the music chain (dispatcher -> registry ->
+  musicCommands -> musicService -> botService -> dispatcher). The bot now resolves the
+  dispatcher lazily at connect time, which is also the honest semantic: it is only
+  needed when a session starts.
 - A new `JavaTranslationsTest` scans the Java sources for translation keys and found two
   that were referenced but missing (`dashboard.welcome` and `event.error.optionNotFound`),
   which would have rendered as `!key!` in the UI.

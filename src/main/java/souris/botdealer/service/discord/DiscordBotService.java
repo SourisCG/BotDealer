@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import souris.botdealer.security.SecretKey;
 import souris.botdealer.security.SecretService;
@@ -42,7 +43,7 @@ public class DiscordBotService {
 
 	private final SecretService secrets;
 	private final AppSettingsService settings;
-	private final CommandDispatcher dispatcher;
+	private final ObjectProvider<CommandDispatcher> dispatcher;
 	private final UiEventBus uiEvents;
 
 	private final AtomicReference<BotStatus> status = new AtomicReference<>(BotStatus.STOPPED);
@@ -50,8 +51,8 @@ public class DiscordBotService {
 	private volatile JDA jda;
 	private volatile boolean voiceAvailable;
 
-	public DiscordBotService(SecretService secrets, AppSettingsService settings, CommandDispatcher dispatcher,
-			UiEventBus uiEvents) {
+	public DiscordBotService(SecretService secrets, AppSettingsService settings,
+			ObjectProvider<CommandDispatcher> dispatcher, UiEventBus uiEvents) {
 		this.secrets = secrets;
 		this.settings = settings;
 		this.dispatcher = dispatcher;
@@ -84,7 +85,10 @@ public class DiscordBotService {
 			JDABuilder builder = JDABuilder.createDefault(token, gatewayIntents())
 				.enableCache(CacheFlag.VOICE_STATE)
 				.setActivity(Activity.listening("chorizos"))
-				.addEventListeners(dispatcher);
+				// Resolved here rather than injected: the dispatcher depends (through the
+				// command handlers) on services that need this bot, so a direct
+				// constructor dependency would be a cycle.
+				.addEventListeners(dispatcher.getObject());
 
 			AudioModuleConfig audio = audioConfig();
 			if (audio != null) {

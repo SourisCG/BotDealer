@@ -28,12 +28,12 @@ public class GeneralCommands extends AbstractCommandHandler {
 	}
 
 	@Override
-	public CommandData definition() {
-		return Commands.slash(ROOT, DiscordMessages.CMD_BOTDEALER)
+	public java.util.List<CommandData> definitions() {
+		return java.util.List.of(Commands.slash(ROOT, DiscordMessages.CMD_BOTDEALER)
 			.addSubcommands(
 				new SubcommandData("help", DiscordMessages.CMD_BOTDEALER_HELP),
 				new SubcommandData("ping", DiscordMessages.CMD_BOTDEALER_PING),
-				new SubcommandData("version", DiscordMessages.CMD_BOTDEALER_VERSION));
+				new SubcommandData("version", DiscordMessages.CMD_BOTDEALER_VERSION)));
 	}
 
 	@Override

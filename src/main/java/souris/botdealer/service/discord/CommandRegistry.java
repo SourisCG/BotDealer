@@ -23,11 +23,15 @@ public class CommandRegistry {
 	public CommandRegistry(List<CommandHandler> discovered) {
 		discovered.stream()
 			.sorted(java.util.Comparator.comparing(CommandHandler::rootName))
-			.forEach(handler -> handlers.put(handler.rootName(), handler));
+			.forEach(handler -> handler.definitions()
+				.forEach(definition -> handlers.put(definition.getName(), handler)));
 	}
 
 	public List<CommandData> commandData() {
-		return handlers.values().stream().map(CommandHandler::definition).toList();
+		return handlers.values().stream()
+			.distinct()
+			.flatMap(handler -> handler.definitions().stream())
+			.toList();
 	}
 
 	public Map<String, CommandHandler> byName() {

@@ -52,8 +52,8 @@ public class BetCommands extends AbstractCommandHandler {
 	}
 
 	@Override
-	public CommandData definition() {
-		return Commands.slash(ROOT, DiscordMessages.CMD_BET)
+	public java.util.List<CommandData> definitions() {
+		return java.util.List.of(Commands.slash(ROOT, DiscordMessages.CMD_BET)
 			.addSubcommands(
 				new SubcommandData("place", DiscordMessages.CMD_BET_PLACE)
 					.addOptions(
@@ -63,7 +63,7 @@ public class BetCommands extends AbstractCommandHandler {
 							.setMinValue(0.01)),
 				new SubcommandData("list", DiscordMessages.CMD_BET_LIST)
 					.addOptions(new OptionData(OptionType.INTEGER, "event", DiscordMessages.OPT_EVENT, false)),
-				new SubcommandData("mine", DiscordMessages.CMD_BET_MINE));
+				new SubcommandData("mine", DiscordMessages.CMD_BET_MINE)));
 	}
 
 	@Override

@@ -46,11 +46,11 @@ public class EconomyAdminCommands extends AbstractCommandHandler {
 	}
 
 	@Override
-	public CommandData definition() {
+	public java.util.List<CommandData> definitions() {
 		OptionData target = new OptionData(OptionType.USER, "user", DiscordMessages.OPT_USER, true);
 		OptionData amount = new OptionData(OptionType.NUMBER, "amount", DiscordMessages.OPT_AMOUNT, true)
 			.setMinValue(0.01);
-		return Commands.slash(ROOT, DiscordMessages.CMD_ECONOMY)
+		return java.util.List.of(Commands.slash(ROOT, DiscordMessages.CMD_ECONOMY)
 			.addSubcommands(
 				new SubcommandData("give", DiscordMessages.CMD_ECONOMY_GIVE).addOptions(target, amount),
 				new SubcommandData("remove", DiscordMessages.CMD_ECONOMY_REMOVE)
@@ -60,7 +60,7 @@ public class EconomyAdminCommands extends AbstractCommandHandler {
 				new SubcommandData("set", DiscordMessages.CMD_ECONOMY_SET)
 					.addOptions(new OptionData(OptionType.USER, "user", DiscordMessages.OPT_USER, true),
 						new OptionData(OptionType.NUMBER, "amount", DiscordMessages.OPT_AMOUNT, true)
-							.setMinValue(0)));
+							.setMinValue(0))));
 	}
 
 	@Override

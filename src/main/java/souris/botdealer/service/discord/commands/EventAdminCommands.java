@@ -62,7 +62,7 @@ public class EventAdminCommands extends AbstractCommandHandler {
 	}
 
 	@Override
-	public CommandData definition() {
+	public java.util.List<CommandData> definitions() {
 		SubcommandData create = new SubcommandData("create", DiscordMessages.CMD_EVENT_CREATE)
 			.addOptions(
 				new OptionData(OptionType.STRING, "title", DiscordMessages.OPT_TITLE, true),
@@ -77,7 +77,7 @@ public class EventAdminCommands extends AbstractCommandHandler {
 				new OptionData(OptionType.STRING, "odds", DiscordMessages.OPT_ODDS, false),
 				new OptionData(OptionType.INTEGER, "closes_in_minutes", DiscordMessages.OPT_CLOSES_IN, false)
 					.setMinValue(1));
-		return Commands.slash(ROOT, DiscordMessages.CMD_EVENT)
+		return java.util.List.of(Commands.slash(ROOT, DiscordMessages.CMD_EVENT)
 			.addSubcommands(create,
 				new SubcommandData("close", DiscordMessages.CMD_EVENT_CLOSE)
 					.addOptions(new OptionData(OptionType.INTEGER, "event", DiscordMessages.OPT_EVENT, true)),
@@ -86,7 +86,7 @@ public class EventAdminCommands extends AbstractCommandHandler {
 						new OptionData(OptionType.INTEGER, "event", DiscordMessages.OPT_EVENT, true),
 						new OptionData(OptionType.INTEGER, "winner", DiscordMessages.OPT_WINNER, true)),
 				new SubcommandData("cancel", DiscordMessages.CMD_EVENT_CANCEL)
-					.addOptions(new OptionData(OptionType.INTEGER, "event", DiscordMessages.OPT_EVENT, true)));
+					.addOptions(new OptionData(OptionType.INTEGER, "event", DiscordMessages.OPT_EVENT, true))));
 	}
 
 	@Override
