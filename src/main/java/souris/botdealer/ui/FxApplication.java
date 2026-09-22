@@ -29,6 +29,10 @@ public class FxApplication extends Application {
 	public void init() {
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(BotDealerApplication.class);
 		builder.web(WebApplicationType.NONE);
+		// Optional user overrides live next to the data (and therefore writable), not in
+		// the read-only app image. Same keys as the bundled application.properties.
+		builder.properties("spring.config.additional-location=optional:file:"
+			+ souris.botdealer.config.AppPaths.configDir() + "/");
 		context = builder.run(getParameters().getRaw().toArray(new String[0]));
 	}
 
