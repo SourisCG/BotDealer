@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-	BotDealer logging: console + rotating file, with %mask(...) redaction of Discord-style secrets.
-	Converter: souris.botdealer.logging.TokenMaskingConverter
-	Log directory comes from the "botdealer.log.dir" property (defaults to the per-user data folder).
+	BotDealer logging: console + rotating file, with secret redaction.
+	Converters (see souris.botdealer.logging):
+	  %safeMsg -> message with token-shaped text redacted
+	  %safeEx  -> stack trace with token-shaped text redacted (empty when no throwable)
+	Plain ClassicConverters are used instead of the composite %word(...) form because the
+	composite form swallowed the rest of the pattern in Logback 1.5 and removed newlines.
 -->
 <configuration>
-	<conversionRule conversionWord="mask" class="souris.botdealer.logging.TokenMaskingConverter"/>
+	<conversionRule conversionWord="safeMsg" class="souris.botdealer.logging.RedactingMessageConverter"/>
+	<conversionRule conversionWord="safeEx" class="souris.botdealer.logging.RedactingThrowableConverter"/>
 
 	<springProperty name="logDir" source="botdealer.log.dir" defaultValue="${user.home}/.local/share/BotDealer/logs"/>
 
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %mask(%msg%ex)%n</pattern>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %safeMsg%safeEx%n</pattern>
 		</encoder>
 	</appender>
 
@@ -24,7 +28,7 @@
 			<totalSizeCap>200MB</totalSizeCap>
 		</rollingPolicy>
 		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %mask(%msg%ex)%n</pattern>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %safeMsg%safeEx%n</pattern>
 		</encoder>
 	</appender>
 

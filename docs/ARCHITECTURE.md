@@ -47,7 +47,7 @@ language is Spanish, runtime switch via Settings/wizard. FXML uses `%key`; bot r
 
 - `application.properties` is local-only (gitignored); the committed `.example` documents every key.
 - The Discord token is NEVER a property, NEVER in the DB, NEVER logged: Phase 1 stores it in
-  the OS keychain with an AES-GCM file fallback, and `TokenMaskingConverter` (`%mask`)
+  the OS keychain with an AES-GCM file fallback, and `RedactingMessageConverter`/`RedactingThrowableConverter` (`%safeMsg`/`%safeEx`)
   redacts token-shaped strings in all appenders as a second line of defense.
 
 ## Data

@@ -5,6 +5,11 @@ All notable changes to BotDealer are documented here. Format follows Keep a Chan
 ## [Unreleased]
 
 ### Added
+- Phase 2c: `--self-test` headless verification, run by CI on every packaged build.
+  It boots Spring without JavaFX and checks the data folder, the database, the
+  translations, the credential backend, the bundled assets and the native libraries
+  (JDAVE, Opus, Piper), then exits with a status code. Fatal checks decide the exit
+  code; optional capabilities are warnings.
 - Phase 2a: native packaging with jpackage.
   - `package` Maven profile producing a self-contained application image plus
     `.rpm`, `.deb`, `.exe` or `app-image` installers (`-Djpackage.type=...`), with the
@@ -50,7 +55,8 @@ All notable changes to BotDealer are documented here. Format follows Keep a Chan
 - Bilingual UI base (English/Spanish): OS language detection, runtime switching, `I18nService`.
 - Per-user data directory (`%APPDATA%/BotDealer`, `~/.local/share/BotDealer`) via `AppPaths`;
   H2 file DB and rotating logs live there. No more `./db` relative to the working directory.
-- Token-safe logging: `TokenMaskingConverter` (`%mask`) redacts Discord-style secrets in every appender.
+- Token-safe logging: `RedactingMessageConverter` (`%safeMsg`) and `RedactingThrowableConverter` (`%safeEx`) redact
+  Discord-style secrets in messages and stack traces on every appender.
 - Design system: `base.css` / `components.css` / `effects.css` in the original palette
   (green `#80ed99`, purple `#301466`, teal `#38a3a5`).
 - CI test job (`.github/workflows/build.yml`): build + unit tests on every push/PR.
@@ -63,6 +69,13 @@ All notable changes to BotDealer are documented here. Format follows Keep a Chan
   and the broken `SpringApplication.run` + `Application.launch` ordering.
 
 ### Fixed
+- JitPack was searched before Maven Central and answered for the GitHub-style group
+  `io.github.jvoice-project`, shadowing the real 76 MB `piper-jni` jar with a 15 KB stub
+  that contains no native libraries. Offline TTS would have been dead on arrival.
+  Maven Central is now declared first, so JitPack only serves what Central lacks.
+- Log files had no line breaks: the composite converter form `%mask(%msg%ex)` swallowed
+  the rest of the Logback pattern, so `%n` was emitted literally. Replaced with plain
+  `%safeMsg`/`%safeEx` classic converters, which also redact stack traces.
 - The packaged app silently lost OS keychain support: java-keyring's freedesktop backend
   needs `com.sun.security.auth.module.UnixSystem` from the `jdk.security.auth` module,
   which is not part of `java.se`. The module is now part of the jlink runtime.

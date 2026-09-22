@@ -20,6 +20,7 @@ package souris.botdealer;
 import javafx.application.Application;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import souris.botdealer.config.AppPaths;
+import souris.botdealer.diagnostics.SelfTest;
 import souris.botdealer.ui.FxApplication;
 
 /**
@@ -29,11 +30,17 @@ import souris.botdealer.ui.FxApplication;
  * or a jpackage image when the main class is an Application subclass, and the
  * class-path based JavaFX setup requires a plain launcher. All JavaFX bootstrapping
  * lives in {@link FxApplication}.</p>
+ *
+ * <p>{@code --self-test} runs a headless verification of the installation (used by CI
+ * on every packaged build) instead of opening the UI.</p>
  */
 @SpringBootApplication
 public class BotDealerApplication {
 
 	public static void main(String[] args) {
+		if (SelfTest.isRequested(args)) {
+			System.exit(SelfTest.run(args));
+		}
 		AppPaths.init();
 		Application.launch(FxApplication.class, args);
 	}

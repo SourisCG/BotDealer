@@ -221,8 +221,22 @@
 		</profile>
 	</profiles>
 
-	<!-- Repositories for artifacts that are not on Maven Central -->
+	<!--
+		Repositories for artifacts that are not on Maven Central.
+		Central is declared FIRST on purpose: Maven queries repositories in order, and
+		JitPack answers for any GitHub-style group id (io.github.*) with its own build.
+		Without this ordering, JitPack shadowed the real io.github.jvoice-project:piper-jni
+		jar with a 15 KB stub containing no native libraries, silently breaking offline TTS.
+		JitPack is only needed for LavaPlayer's optional JAADec/IBXM decoders.
+	-->
 	<repositories>
+		<repository>
+			<id>central</id>
+			<name>Maven Central</name>
+			<url>https://repo1.maven.org/maven2</url>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>false</enabled></snapshots>
+		</repository>
 		<repository>
 			<id>lavalink</id>
 			<name>Lavalink Maven</name>
@@ -232,7 +246,7 @@
 		</repository>
 		<repository>
 			<id>jitpack</id>
-			<name>JitPack (LavaPlayer audio decoders)</name>
+			<name>JitPack (LavaPlayer optional audio decoders)</name>
 			<url>https://jitpack.io</url>
 			<releases><enabled>true</enabled></releases>
 			<snapshots><enabled>false</enabled></snapshots>
