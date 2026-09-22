@@ -150,6 +150,9 @@ All notable changes to BotDealer are documented here. Format follows Keep a Chan
   and the broken `SpringApplication.run` + `Application.launch` ordering.
 
 ### Fixed
+- A new `JavaTranslationsTest` scans the Java sources for translation keys and found two
+  that were referenced but missing (`dashboard.welcome` and `event.error.optionNotFound`),
+  which would have rendered as `!key!` in the UI.
 - Removed i18n keys that FXML still referenced, which crashed the UI at load time.
   A new `FxmlTranslationsTest` scans every `%key` in the FXML sources and fails the
   build when one is missing from either bundle; it immediately caught a second one.

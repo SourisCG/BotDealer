@@ -32,6 +32,8 @@ public enum AppSettingKey {
 	MUSIC_MAX_QUEUE_SIZE("music.maxQueueSize", "100"),
 	MUSIC_MAX_TRACK_MINUTES("music.maxTrackMinutes", "30"),
 	MUSIC_FOLDER("music.folder", ""),
+	/** Media cache cap in megabytes; 0 disables the cache. */
+	MUSIC_CACHE_MAX_MB("music.cacheMaxMb", "2048"),
 
 	TTS_ENABLED("tts.enabled", "true"),
 	/** Empty means "use the engine default voice". */
