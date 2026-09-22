@@ -23,10 +23,14 @@ import souris.botdealer.service.discord.commands.EconomyCommands;
 import souris.botdealer.service.discord.commands.EventAdminCommands;
 import souris.botdealer.service.discord.commands.GeneralCommands;
 import souris.botdealer.service.discord.commands.MusicCommands;
+import souris.botdealer.service.discord.commands.TtsCommands;
 import souris.botdealer.service.economy.DailyRewardService;
 import souris.botdealer.service.economy.GuildConfigService;
 import souris.botdealer.service.economy.WalletService;
 import souris.botdealer.service.music.MusicService;
+import souris.botdealer.service.tts.TtsService;
+import souris.botdealer.service.tts.VoiceRegistry;
+import souris.botdealer.settings.AppSettingsService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -60,14 +64,16 @@ class CommandRegistryTest {
 				mock(BotPermissions.class), bus),
 			new EconomyAdminCommands(i18n, guildConfig, mock(WalletService.class), mock(BotPermissions.class),
 				bus),
-			new MusicCommands(i18n, guildConfig, mock(MusicService.class), mock(MusicAnnouncer.class)));
+			new MusicCommands(i18n, guildConfig, mock(MusicService.class), mock(MusicAnnouncer.class)),
+			new TtsCommands(i18n, guildConfig, mock(TtsService.class), mock(VoiceRegistry.class),
+				mock(MusicService.class), mock(AppSettingsService.class)));
 		return new CommandRegistry(handlers);
 	}
 
 	@Test
 	void registersEveryExpectedRootCommand() {
 		assertEquals(List.of("bet", "botdealer", "chorizos", "disconnect", "economy", "event", "loop",
-			"nowplaying", "pause", "play", "queue", "resume", "shuffle", "skip", "stop", "volume"),
+			"nowplaying", "pause", "play", "queue", "resume", "shuffle", "skip", "stop", "tts", "volume"),
 			registry().names().stream().sorted().toList());
 	}
 

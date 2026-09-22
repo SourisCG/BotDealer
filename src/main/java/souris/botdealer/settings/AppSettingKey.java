@@ -39,7 +39,13 @@ public enum AppSettingKey {
 	/** Empty means "use the engine default voice". */
 	TTS_VOICE("tts.voice", ""),
 	TTS_SPEED("tts.speed", "1.0"),
-	TTS_READ_ALOUD("tts.readAloud", "false");
+	TTS_READ_ALOUD("tts.readAloud", "false"),
+	/** Lower the music while speech plays. */
+	TTS_DUCK("tts.duck", "true"),
+	/** Volume percentage the music drops to while speaking. */
+	TTS_DUCK_PERCENT("tts.duckPercent", "25"),
+	/** Cap on how much text a single utterance may contain. */
+	TTS_MAX_LENGTH("tts.maxLength", "300");
 
 	private final String key;
 	private final String defaultValue;

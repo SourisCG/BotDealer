@@ -11,6 +11,8 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import souris.botdealer.net.HttpFetcher;
+import souris.botdealer.net.HttpFetcher;
 import souris.botdealer.util.Checksum;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

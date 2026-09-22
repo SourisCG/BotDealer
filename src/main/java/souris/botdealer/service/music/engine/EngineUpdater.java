@@ -17,6 +17,7 @@ import java.util.zip.ZipInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import souris.botdealer.net.HttpFetcher;
 import souris.botdealer.util.Checksum;
 import souris.botdealer.util.ProcessRunner;
 

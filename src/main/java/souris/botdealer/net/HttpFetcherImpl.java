@@ -1,7 +1,7 @@
 /*
  * BotDealer - Copyright (C) 2026 Sebastián García - GPL-3.0 (see LICENSE).
  */
-package souris.botdealer.service.music.engine;
+package souris.botdealer.net;
 
 import java.io.IOException;
 import java.net.URI;

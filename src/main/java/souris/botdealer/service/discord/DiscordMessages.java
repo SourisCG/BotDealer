@@ -55,6 +55,16 @@ public final class DiscordMessages {
 	public static final String CMD_SHUFFLE = "discord.command.shuffle";
 	public static final String CMD_DISCONNECT = "discord.command.disconnect";
 
+	// ---------------------------------------------------------------- tts commands
+	public static final String CMD_TTS = "discord.command.tts";
+	public static final String CMD_TTS_SAY = "discord.command.tts.say";
+	public static final String CMD_TTS_JOIN = "discord.command.tts.join";
+	public static final String CMD_TTS_LEAVE = "discord.command.tts.leave";
+	public static final String CMD_TTS_VOICE = "discord.command.tts.voice";
+	public static final String CMD_TTS_ON = "discord.command.tts.on";
+	public static final String CMD_TTS_OFF = "discord.command.tts.off";
+	public static final String CMD_TTS_STATUS = "discord.command.tts.status";
+
 	// ---------------------------------------------------------------- option names
 	public static final String OPT_USER = "discord.option.user";
 	public static final String OPT_EVENT = "discord.option.event";
@@ -74,6 +84,8 @@ public final class DiscordMessages {
 	public static final String OPT_QUERY = "discord.option.query";
 	public static final String OPT_LEVEL = "discord.option.level";
 	public static final String OPT_LOOP_MODE = "discord.option.loopMode";
+	public static final String OPT_TTS_TEXT = "discord.option.ttsText";
+	public static final String OPT_TTS_VOICE = "discord.option.ttsVoice";
 
 	// ---------------------------------------------------------------- replies
 	public static final String REPLY_PING = "discord.reply.ping";
@@ -98,6 +110,7 @@ public final class DiscordMessages {
 	public static final String REPLY_ECONOMY_REMOVED = "discord.reply.economy.removed";
 	public static final String REPLY_ECONOMY_SET = "discord.reply.economy.set";
 	public static final String REPLY_SEARCHING = "discord.reply.searching";
+	public static final String REPLY_TTS_SAY = "discord.reply.ttsSay";
 
 	// ---------------------------------------------------------------- errors
 	public static final String ERROR_NOT_ADMIN = "discord.error.notAdmin";

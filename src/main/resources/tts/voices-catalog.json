@@ -1,0 +1,59 @@
+{
+  "_comment": "BotDealer voice catalog (GPL-3.0, see LICENSE). Curated Piper voices offered in the Text to speech screen. URLs point at the upstream rhasspy/piper-voices repository on Hugging Face. sizeBytes is verified on every download; sha256Model/sha256Config are verified when present, and the build fills them in for the voices shipped in the installer.",
+  "voices": [
+    {
+      "id": "es_ES-sharvard-medium",
+      "displayName": "Español (Sharvard, 2 voces)",
+      "languageCode": "es_ES",
+      "languageName": "Español",
+      "baseUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_ES/sharvard/medium/es_ES-sharvard-medium",
+      "sizeBytes": 76760000,
+      "bundled": true
+    },
+    {
+      "id": "en_US-lessac-medium",
+      "displayName": "English (Lessac)",
+      "languageCode": "en_US",
+      "languageName": "English",
+      "baseUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium",
+      "sizeBytes": 63200000,
+      "bundled": true
+    },
+    {
+      "id": "en_US-libritts_r-medium",
+      "displayName": "English (LibriTTS, many voices)",
+      "languageCode": "en_US",
+      "languageName": "English",
+      "baseUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/libritts_r/medium/en_US-libritts_r-medium",
+      "sizeBytes": 78500000,
+      "bundled": true
+    },
+    {
+      "id": "es_MX-claude-high",
+      "displayName": "Español (México, Claude)",
+      "languageCode": "es_MX",
+      "languageName": "Español",
+      "baseUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_MX/claude/high/es_MX-claude-high",
+      "sizeBytes": 63100000,
+      "bundled": false
+    },
+    {
+      "id": "en_GB-alba-medium",
+      "displayName": "English (Alba, British)",
+      "languageCode": "en_GB",
+      "languageName": "English",
+      "baseUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_GB/alba/medium/en_GB-alba-medium",
+      "sizeBytes": 63200000,
+      "bundled": false
+    },
+    {
+      "id": "de_DE-thorsten-medium",
+      "displayName": "Deutsch (Thorsten)",
+      "languageCode": "de_DE",
+      "languageName": "Deutsch",
+      "baseUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/de/de_DE/thorsten/medium/de_DE-thorsten-medium",
+      "sizeBytes": 63500000,
+      "bundled": false
+    }
+  ]
+}

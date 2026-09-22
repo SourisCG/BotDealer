@@ -106,6 +106,49 @@ public class MusicService {
 		resolveAndEnqueue(guildId, query);
 	}
 
+	/**
+	 * Queues a local file, e.g. synthesized speech.
+	 *
+	 * <p>Used by the TTS service, which needs the loaded track's duration to know when to
+	 * restore the music volume.</p>
+	 *
+	 * @param onQueued called with the loaded track once it is in the queue
+	 */
+	public void enqueueLocalFile(long guildId, java.nio.file.Path file,
+			java.util.function.Consumer<AudioTrack> onQueued) {
+		DirectLoaderImpl loader = directLoader.getIfAvailable();
+		if (loader == null) {
+			uiEvents.publish(new MusicEvents.PlaybackFailed(guildId, "music.error.notInstalled", ""));
+			return;
+		}
+		GuildMusicManager manager = manager(guildId);
+		loader.loadFile(file, new AudioLoadResultHandler() {
+			@Override
+			public void trackLoaded(AudioTrack track) {
+				// Speech is never persisted in history and never blocked by the queue cap:
+				// it is short and time-sensitive.
+				manager.scheduler().enqueue(track);
+				onQueued.accept(track);
+			}
+
+			@Override
+			public void playlistLoaded(AudioPlaylist playlist) {
+				noMatches();
+			}
+
+			@Override
+			public void noMatches() {
+				uiEvents.publish(new MusicEvents.PlaybackFailed(guildId, "tts.error.failed", ""));
+			}
+
+			@Override
+			public void loadFailed(FriendlyException exception) {
+				uiEvents.publish(new MusicEvents.PlaybackFailed(guildId, "tts.error.failed",
+					exception.getMessage() == null ? "" : exception.getMessage()));
+			}
+		});
+	}
+
 	/** Empties the queue but lets the current track finish. */
 	public boolean clearQueue(long guildId) {
 		GuildMusicManager manager = managers.get(guildId);

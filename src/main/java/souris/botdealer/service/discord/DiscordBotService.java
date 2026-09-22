@@ -44,6 +44,7 @@ public class DiscordBotService {
 	private final SecretService secrets;
 	private final AppSettingsService settings;
 	private final ObjectProvider<CommandDispatcher> dispatcher;
+	private final ObjectProvider<ReadAloudListener> readAloud;
 	private final UiEventBus uiEvents;
 
 	private final AtomicReference<BotStatus> status = new AtomicReference<>(BotStatus.STOPPED);
@@ -52,10 +53,12 @@ public class DiscordBotService {
 	private volatile boolean voiceAvailable;
 
 	public DiscordBotService(SecretService secrets, AppSettingsService settings,
-			ObjectProvider<CommandDispatcher> dispatcher, UiEventBus uiEvents) {
+			ObjectProvider<CommandDispatcher> dispatcher, ObjectProvider<ReadAloudListener> readAloud,
+			UiEventBus uiEvents) {
 		this.secrets = secrets;
 		this.settings = settings;
 		this.dispatcher = dispatcher;
+		this.readAloud = readAloud;
 		this.uiEvents = uiEvents;
 	}
 
@@ -88,7 +91,7 @@ public class DiscordBotService {
 				// Resolved here rather than injected: the dispatcher depends (through the
 				// command handlers) on services that need this bot, so a direct
 				// constructor dependency would be a cycle.
-				.addEventListeners(dispatcher.getObject());
+				.addEventListeners(dispatcher.getObject(), readAloud.getObject());
 
 			AudioModuleConfig audio = audioConfig();
 			if (audio != null) {
