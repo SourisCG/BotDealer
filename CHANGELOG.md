@@ -2,7 +2,26 @@
 
 All notable changes to BotDealer are documented here. Format follows Keep a Changelog (Unreleased / versions).
 
-## [Unreleased]
+- Phase 3b: betting and settlement.
+  - `BettingMath` holds every payout rule as pure functions: pools, rake, parimutuel
+    shares and fixed-odds payouts.
+  - Parimutuel uses **largest-remainder apportionment**: exact shares are truncated to
+    cents and the leftover cents go to the winners with the largest fractional part, so
+    payouts sum to exactly the net pool. No money is created or lost to rounding.
+  - If nobody backed the winning option every stake is refunded instead of the pot
+    vanishing; fixed odds are paid at the multiplier frozen when each bet was placed and
+    carry no extra rake (the margin is already in the odds).
+  - `BetService.place` validates and debits and writes the bet in one transaction, so a
+    rejected bet never moves money and a failed write never leaves a paid-for bet.
+  - `EventService` owns the lifecycle (create/open/close/auto-close/cancel/settle);
+    settlement credits every winner, marks every loser and flips the event in one
+    transaction.
+  - `EventQueryService` builds the live view (pools, bet counts, implied odds, fixed-odds
+    liability warnings).
+  - Fixed a design bug the tests caught: the house wallet was created with the member
+    starting balance, which would have minted money when collecting the rake. It now
+    starts at zero and only ever holds rake.
+  - 116 tests green.
 
 ### Added
 - Phase 3a: gambling domain model and economy.

@@ -108,44 +108,86 @@ public class WalletService {
 
 	// ---------------------------------------------------------------- mutations
 
-	/** Credits an amount. Creates the wallet first when needed. */
-	public Wallet deposit(long guildId, long userId, String displayName, BigDecimal amount,
+	/**
+	 * Credits an amount in the caller's transaction, without opening one or retrying.
+	 *
+	 * <p>This is the building block for operations that must move money and do something
+	 * else atomically (placing a bet, settling an event). The caller owns the transaction
+	 * and the retry; see {@link #deposit} for the self-contained version.</p>
+	 */
+	public Wallet creditInTransaction(long guildId, long userId, String displayName, BigDecimal amount,
 			LedgerReason reason, Long referenceId, Long actorId) {
 		BigDecimal credit = Money.normalize(amount);
 		if (!Money.isPositive(credit)) {
-			throw new IllegalArgumentException("Deposit amount must be positive");
+			throw new IllegalArgumentException("Credit amount must be positive");
 		}
-		return Retry.onConflict(() -> transactions.execute(status -> {
-			Wallet wallet = loadOrCreate(guildId, userId, displayName);
-			BigDecimal after = Money.normalize(wallet.getBalance().add(credit));
-			wallet.setBalance(after);
-			wallet.setUpdatedAt(Instant.now());
-			wallets.save(wallet);
-			ledger.record(guildId, userId, credit, after, reason, referenceId, actorId);
-			return wallet;
-		}));
+		Wallet wallet = loadOrCreate(guildId, userId, displayName);
+		BigDecimal after = Money.normalize(wallet.getBalance().add(credit));
+		wallet.setBalance(after);
+		wallet.setUpdatedAt(Instant.now());
+		wallets.save(wallet);
+		ledger.record(guildId, userId, credit, after, reason, referenceId, actorId);
+		return wallet;
+	}
+
+	/**
+	 * Debits an amount in the caller's transaction, without opening one or retrying.
+	 *
+	 * @throws InsufficientFundsException when the balance would go below zero
+	 */
+	public Wallet debitInTransaction(long guildId, long userId, String displayName, BigDecimal amount,
+			LedgerReason reason, Long referenceId, Long actorId) {
+		BigDecimal debit = Money.normalize(amount);
+		if (!Money.isPositive(debit)) {
+			throw new IllegalArgumentException("Debit amount must be positive");
+		}
+		Wallet wallet = loadOrCreate(guildId, userId, displayName);
+		BigDecimal balance = Money.normalize(wallet.getBalance());
+		if (balance.compareTo(debit) < 0) {
+			throw new InsufficientFundsException(balance.toPlainString(), debit.toPlainString());
+		}
+		BigDecimal after = Money.normalize(balance.subtract(debit));
+		wallet.setBalance(after);
+		wallet.setUpdatedAt(Instant.now());
+		wallets.save(wallet);
+		ledger.record(guildId, userId, debit.negate(), after, reason, referenceId, actorId);
+		return wallet;
+	}
+
+	/**
+	 * Credits the per-guild house wallet (rake) in the caller's transaction.
+	 *
+	 * <p>The house wallet is created with a <b>zero</b> balance: it must never receive the
+	 * member starting balance, otherwise collecting the rake would mint money out of
+	 * nowhere and inflate the economy.</p>
+	 */
+	public Wallet creditHouseInTransaction(long guildId, BigDecimal amount, LedgerReason reason,
+			Long referenceId) {
+		BigDecimal credit = Money.normalize(amount);
+		if (!Money.isPositive(credit)) {
+			throw new IllegalArgumentException("House credit must be positive");
+		}
+		Wallet wallet = loadOrCreate(guildId, HOUSE_USER_ID, "House", false);
+		BigDecimal after = Money.normalize(wallet.getBalance().add(credit));
+		wallet.setBalance(after);
+		wallet.setUpdatedAt(Instant.now());
+		wallets.save(wallet);
+		ledger.record(guildId, HOUSE_USER_ID, credit, after, reason, referenceId, null);
+		return wallet;
+	}
+
+	/** Credits an amount. Creates the wallet first when needed. */
+	public Wallet deposit(long guildId, long userId, String displayName, BigDecimal amount,
+			LedgerReason reason, Long referenceId, Long actorId) {
+		return Retry.onConflict(() -> transactions.execute(status ->
+			creditInTransaction(guildId, userId, displayName, amount, reason, referenceId, actorId)));
 	}
 
 	/** Debits an amount, failing when the balance is not enough. */
 	public Wallet withdraw(long guildId, long userId, String displayName, BigDecimal amount,
 			LedgerReason reason, Long referenceId, Long actorId) {
-		BigDecimal debit = Money.normalize(amount);
-		if (!Money.isPositive(debit)) {
-			throw new IllegalArgumentException("Withdrawal amount must be positive");
-		}
-		return Retry.onConflict(() -> transactions.execute(status -> {
-			Wallet wallet = loadOrCreate(guildId, userId, displayName);
-			BigDecimal balance = Money.normalize(wallet.getBalance());
-			if (balance.compareTo(debit) < 0) {
-				throw new InsufficientFundsException(balance.toPlainString(), debit.toPlainString());
-			}
-			BigDecimal after = Money.normalize(balance.subtract(debit));
-			wallet.setBalance(after);
-			wallet.setUpdatedAt(Instant.now());
-			wallets.save(wallet);
-			ledger.record(guildId, userId, debit.negate(), after, reason, referenceId, actorId);
-			return wallet;
-		}));
+		return Retry.onConflict(() -> transactions.execute(status ->
+			debitInTransaction(guildId, userId, displayName, amount, reason, referenceId, actorId)));
 	}
 
 	/**
@@ -199,8 +241,19 @@ public class WalletService {
 
 	/** Loads the wallet or creates it with the starting balance; must run in a transaction. */
 	private Wallet loadOrCreate(long guildId, long userId, String displayName) {
+		return loadOrCreate(guildId, userId, displayName, true);
+	}
+
+	/**
+	 * Loads the wallet, creating it when missing.
+	 *
+	 * @param grantStartingBalance false for the house wallet, which starts at zero
+	 */
+	private Wallet loadOrCreate(long guildId, long userId, String displayName, boolean grantStartingBalance) {
 		return wallets.findByGuildIdAndUserId(guildId, userId).orElseGet(() -> {
-			BigDecimal starting = Money.normalize(guildConfig.startingBalance(guildId));
+			BigDecimal starting = grantStartingBalance
+				? Money.normalize(guildConfig.startingBalance(guildId))
+				: Money.ZERO;
 			Wallet wallet = new Wallet(null, guildId, userId, displayName, starting, null,
 				Instant.now(), Instant.now(), 0L);
 			wallets.save(wallet);
