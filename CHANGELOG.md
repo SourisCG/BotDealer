@@ -5,6 +5,15 @@ All notable changes to BotDealer are documented here. Format follows Keep a Chan
 ## [Unreleased]
 
 ### Added
+- Phase 2a: native packaging with jpackage.
+  - `package` Maven profile producing a self-contained application image plus
+    `.rpm`, `.deb`, `.exe` or `app-image` installers (`-Djpackage.type=...`), with the
+    app version overridable from the release tag.
+  - The image bundles its own jlink runtime and native launcher, so end users install
+    nothing. JavaFX rides on the classpath (the main class is deliberately not an
+    `Application` subclass).
+  - `docs/BUILD.md` documents the packaging flow, required platform tools and the
+    jlink module list.
 - Phase 1c: application shell and first-run wizard.
   - Sidebar shell (Dashboard, Events, Wallets, Music, TTS, Settings, About) with a
     status bar showing bot/token state, music engine, currency and credential backend.
@@ -52,6 +61,13 @@ All notable changes to BotDealer are documented here. Format follows Keep a Chan
 - Project license MIT -> **GPL-3.0** (required by the bundled Piper/espeak-ng natives).
 - Removed `spring-boot-starter-actuator`, `spring-boot-h2console`, hardcoded H2 password,
   and the broken `SpringApplication.run` + `Application.launch` ordering.
+
+### Fixed
+- The packaged app silently lost OS keychain support: java-keyring's freedesktop backend
+  needs `com.sun.security.auth.module.UnixSystem` from the `jdk.security.auth` module,
+  which is not part of `java.se`. The module is now part of the jlink runtime.
+- The keychain probe is bounded by a 5 second timeout and runs on a daemon virtual
+  thread, so a locked or prompting keyring can no longer hang application startup.
 
 ### Removed
 - Old `MainApp` launcher, the placeholder boot screen (`start.fxml`/`StartController`) and

@@ -4,6 +4,7 @@
 package souris.botdealer.ui.wizard;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -444,6 +445,10 @@ public class WizardController {
 		ttsSpeedLabel.setText(i18n.get("wizard.tts.speed", round1(ttsSpeedSlider.getValue())));
 	}
 
+	private static double round1(double value) {
+		return BigDecimal.valueOf(value).setScale(1, RoundingMode.HALF_UP).doubleValue();
+	}
+
 	private MusicEngine selectedEngine() {
 		if (engineDirectButton.isSelected()) {
 			return MusicEngine.YOUTUBE_DIRECT;
@@ -452,6 +457,14 @@ public class WizardController {
 			return MusicEngine.YTDLP;
 		}
 		return MusicEngine.AUTO;
+	}
+
+	private String voiceLabel(String voiceId) {
+		if (voiceId == null) {
+			return "";
+		}
+		String labelKey = VOICE_LABEL_KEYS.get(voiceId);
+		return labelKey == null ? voiceId : i18n.get(labelKey);
 	}
 
 	private void populateSummary() {
@@ -481,14 +494,6 @@ public class WizardController {
 			: "";
 	}
 
-	private String voiceLabel(String voiceId) {
-		String labelKey = VOICE_LABEL_KEYS.get(voiceId == null ? "" : voiceId);
-		return labelKey == null ? i18n.get("wizard.tts.voice.default") : i18n.get(labelKey);
-	}
-
-	private static double round1(double value) {
-		return BigDecimal.valueOf(value).setScale(1, java.math.RoundingMode.HALF_UP).doubleValue();
-	}
 
 	/** Renders a voice id as a friendly, localized name in the combo box. */
 	private static final class VoiceListCell extends javafx.scene.control.ListCell<String> {

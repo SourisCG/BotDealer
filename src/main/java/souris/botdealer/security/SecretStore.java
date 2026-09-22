@@ -26,6 +26,14 @@ public interface SecretStore {
 	/** True when the store can currently persist secrets. */
 	boolean isAvailable();
 
+	/**
+	 * Why the store is unavailable, for logs and the Settings screen. Empty when the
+	 * store works or when it has no diagnostics to offer.
+	 */
+	default String unavailableReason() {
+		return "";
+	}
+
 	/** @return the stored secret, or empty when nothing is stored under that key */
 	Optional<String> read(SecretKey key);
 

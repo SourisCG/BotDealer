@@ -23,7 +23,7 @@
 	</parent>
 	<groupId>souris</groupId>
 	<artifactId>botdealer</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
+	<version>0.1.0</version>
 	<name>BotDealer</name>
 	<description>BotDealer - Discord gambling (chorizos), music and TTS bot with a JavaFX desktop app</description>
 	<url>https://github.com/SourisCG/BotDealer</url>
@@ -50,7 +50,176 @@
 		<piper-jni.version>1.4.1</piper-jni.version>
 		<java-keyring.version>1.0.4</java-keyring.version>
 		<lombok.version>1.18.48</lombok.version>
+
+		<!-- jpackage metadata. CI overrides app.version from the release tag. -->
+		<app.version>${project.version}</app.version>
+		<app.vendor>Sebastián García</app.vendor>
+		<app.description>BotDealer - Discord gambling (chorizos), music and TTS bot with a JavaFX desktop app</app.description>
+		<jpackage.dest>${project.build.directory}/dist</jpackage.dest>
+		<jpackage.input>${project.build.directory}/app</jpackage.input>
+		<!--
+			JDK used to build the runtime image. Defaults to the JDK running Maven; override
+			with -Djpackage.home=/path/to/jdk when the local JDK cannot run jlink (some Linux
+			distributions ship a modified java.security and jlink refuses to use it).
+		-->
+		<jpackage.home>${java.home}</jpackage.home>
+		<!--
+			Modules bundled into the jlink runtime. java.se covers the whole Java SE API
+			(Hibernate needs java.sql/java.naming, JDA needs java.net.http, JavaFX needs
+			java.desktop/java.xml). The jdk.* extras are what the full JDK provides but
+			java.se does not:
+			  jdk.security.auth  -> com.sun.security.auth.module.UnixSystem, used by
+			                        java-keyring's freedesktop backend (without it the
+			                        packaged app silently loses the OS keychain)
+			  jdk.crypto.ec      -> TLS elliptic curves for Discord HTTPS
+			  jdk.zipfs          -> zip filesystem
+			  jdk.charsets       -> non-UTF-8 charsets
+			  jdk.localedata     -> non-English locales
+			  jdk.net            -> unix domain sockets (D-Bus transports)
+			JavaFX itself rides on the classpath: as of JavaFX 25 that works as long as the
+			main class is not an Application subclass.
+		-->
+		<jpackage.modules>java.se,jdk.security.auth,jdk.crypto.ec,jdk.zipfs,jdk.charsets,jdk.localedata,jdk.net,jdk.unsupported,jdk.unsupported.desktop,jdk.jfr</jpackage.modules>
+		<jpackage.jvm.options>--enable-native-access=ALL-UNNAMED</jpackage.jvm.options>
 	</properties>
+
+	<!-- jpackage executable name differs on Windows -->
+	<profiles>
+		<profile>
+			<id>os-unix</id>
+			<activation>
+				<os><family>unix</family></os>
+			</activation>
+			<properties>
+				<jpackage.bin>${jpackage.home}/bin/jpackage</jpackage.bin>
+			</properties>
+		</profile>
+		<profile>
+			<id>os-windows</id>
+			<activation>
+				<os><family>windows</family></os>
+			</activation>
+			<properties>
+				<jpackage.bin>${jpackage.home}/bin/jpackage.exe</jpackage.bin>
+			</properties>
+		</profile>
+
+		<!--
+			Native packaging: builds a self-contained application image plus an installer.
+			The image bundles its own Java runtime, so end users install nothing.
+
+			  mvn -Ppackage -Djpackage.type=app-image package     portable folder
+			  mvn -Ppackage -Djpackage.type=rpm       package     Fedora/RHEL
+			  mvn -Ppackage -Djpackage.type=deb       package     Debian/Mint/Ubuntu
+			  mvn -Ppackage -Djpackage.type=exe       package     Windows installer
+		-->
+		<profile>
+			<id>package</id>
+			<properties>
+				<jpackage.type>app-image</jpackage.type>
+			</properties>
+			<build>
+				<plugins>
+					<!-- The jpackage input must be a plain classpath jar, not the Spring Boot fat jar. -->
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<configuration>
+							<outputDirectory>${jpackage.input}</outputDirectory>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-runtime-dependencies</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${jpackage.input}</outputDirectory>
+									<includeScope>runtime</includeScope>
+									<excludeGroupIds>org.projectlombok</excludeGroupIds>
+									<overWriteReleases>false</overWriteReleases>
+									<overWriteSnapshots>true</overWriteSnapshots>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-clean-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>clean-jpackage-destination</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>clean</goal>
+								</goals>
+								<configuration>
+									<excludeDefaultDirectories>true</excludeDefaultDirectories>
+									<filesets>
+										<fileset>
+											<directory>${jpackage.dest}</directory>
+										</fileset>
+									</filesets>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>jpackage</id>
+								<phase>package</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>${jpackage.bin}</executable>
+									<arguments>
+										<argument>--type</argument>
+										<argument>${jpackage.type}</argument>
+										<argument>--name</argument>
+										<argument>BotDealer</argument>
+										<argument>--app-version</argument>
+										<argument>${app.version}</argument>
+										<argument>--vendor</argument>
+										<argument>${app.vendor}</argument>
+										<argument>--description</argument>
+										<argument>${app.description}</argument>
+										<argument>--input</argument>
+										<argument>${jpackage.input}</argument>
+										<argument>--main-jar</argument>
+										<argument>${project.build.finalName}.jar</argument>
+										<argument>--main-class</argument>
+										<argument>souris.botdealer.BotDealerApplication</argument>
+										<argument>--add-modules</argument>
+										<argument>${jpackage.modules}</argument>
+										<argument>--java-options</argument>
+										<argument>${jpackage.jvm.options}</argument>
+										<argument>--dest</argument>
+										<argument>${jpackage.dest}</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<!-- Repositories for artifacts that are not on Maven Central -->
 	<repositories>
