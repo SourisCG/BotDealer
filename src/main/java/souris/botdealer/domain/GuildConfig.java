@@ -79,6 +79,10 @@ public class GuildConfig {
 	@Column(name = "betting_channel_id")
 	private Long bettingChannelId;
 
+	/** Role allowed to control music without being in the bot's channel. */
+	@Column(name = "dj_role_id")
+	private Long djRoleId;
+
 	@Column(name = "created_at", nullable = false)
 	private Instant createdAt = Instant.now();
 

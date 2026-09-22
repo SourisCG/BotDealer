@@ -46,7 +46,7 @@ public class GuildConfigService {
 		return repository.findById(guildId).orElseGet(() -> {
 			log.debug("Creating guild configuration for {}", guildId);
 			return repository.save(new GuildConfig(guildId, null, null, null, null, null, null, null,
-				null, null, null, null, null, java.time.Instant.now(), null));
+				null, null, null, null, null, null, java.time.Instant.now(), null));
 		});
 	}
 
@@ -95,6 +95,12 @@ public class GuildConfigService {
 	@Transactional(readOnly = true)
 	public int dailyCooldownHours(long guildId) {
 		return intOverride(guildId, GuildConfig::getDailyCooldownHours, AppSettingKey.DAILY_COOLDOWN_HOURS);
+	}
+
+	/** Role allowed to control music without being in the bot's voice channel. */
+	@Transactional(readOnly = true)
+	public Long djRoleId(long guildId) {
+		return find(guildId).map(GuildConfig::getDjRoleId).orElse(null);
 	}
 
 	@Transactional(readOnly = true)
