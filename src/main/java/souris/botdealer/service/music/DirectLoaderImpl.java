@@ -45,6 +45,7 @@ public class DirectLoaderImpl implements DirectLoader {
 	private static final int PLAYLIST_PAGE_LIMIT = 10;
 
 	private final DefaultAudioPlayerManager playerManager;
+	private final dev.lavalink.youtube.YoutubeAudioSourceManager youtubeSource;
 	private final boolean available;
 
 	public DirectLoaderImpl(SecretService secrets) {
@@ -56,21 +57,23 @@ public class DirectLoaderImpl implements DirectLoader {
 		playerManager.registerSourceManager(new HttpAudioSourceManager());
 		playerManager.registerSourceManager(new LocalAudioSourceManager());
 
-		boolean youtubeRegistered = false;
+		dev.lavalink.youtube.YoutubeAudioSourceManager created = null;
 		try {
-			var youtube = new dev.lavalink.youtube.YoutubeAudioSourceManager(true,
+			created = new dev.lavalink.youtube.YoutubeAudioSourceManager(true,
 				new MusicWithThumbnail(), new WebWithThumbnail(), new AndroidVrWithThumbnail());
-			youtube.setPlaylistPageCount(PLAYLIST_PAGE_LIMIT);
+			created.setPlaylistPageCount(PLAYLIST_PAGE_LIMIT);
+			dev.lavalink.youtube.YoutubeAudioSourceManager source = created;
 			secrets.get(SecretKey.YOUTUBE_OAUTH_REFRESH_TOKEN).ifPresent(token -> {
-				youtube.useOauth2(token, true);
+				source.useOauth2(token, true);
 				log.info("YouTube account linking is active");
 			});
-			playerManager.registerSourceManager(youtube);
-			youtubeRegistered = true;
+			playerManager.registerSourceManager(created);
 		} catch (Throwable t) {
 			log.error("Could not register the YouTube source; music will not resolve: {}", t.toString());
+			created = null;
 		}
-		this.available = youtubeRegistered;
+		this.youtubeSource = created;
+		this.available = created != null;
 	}
 
 	@Override
@@ -88,6 +91,11 @@ public class DirectLoaderImpl implements DirectLoader {
 		return playerManager.getSourceManagers().stream()
 			.map(manager -> manager.getSourceName())
 			.toList();
+	}
+
+	/** The live YouTube source manager, used by the account-linking flow. */
+	public java.util.Optional<dev.lavalink.youtube.YoutubeAudioSourceManager> youtubeSource() {
+		return java.util.Optional.ofNullable(youtubeSource);
 	}
 
 	/** The manager the guild players are created from. */

@@ -84,7 +84,39 @@ public class MusicService {
 		if (!join(guild, channel)) {
 			return;
 		}
+		resolveAndEnqueue(guildId, query);
+	}
 
+	/**
+	 * Plays a request on behalf of the desktop operator.
+	 *
+	 * <p>The operator is not a Discord member, so the "join a voice channel first" rule
+	 * cannot apply: the bot must already be connected, and the request goes to whatever
+	 * channel it is in.</p>
+	 */
+	public void playAsOperator(long guildId, String query) {
+		Guild guild = requireGuild(guildId);
+		if (guild == null) {
+			return;
+		}
+		if (!guild.getAudioManager().isConnected()) {
+			uiEvents.publish(new MusicEvents.PlaybackFailed(guildId, "music.error.connectFirst", ""));
+			return;
+		}
+		resolveAndEnqueue(guildId, query);
+	}
+
+	/** Empties the queue but lets the current track finish. */
+	public boolean clearQueue(long guildId) {
+		GuildMusicManager manager = managers.get(guildId);
+		if (manager == null) {
+			return false;
+		}
+		manager.scheduler().clear(false);
+		return true;
+	}
+
+	private void resolveAndEnqueue(long guildId, String query) {
 		int maxMinutes = Math.max(0, settings.getInt(AppSettingKey.MUSIC_MAX_TRACK_MINUTES));
 		GuildMusicManager manager = manager(guildId);
 

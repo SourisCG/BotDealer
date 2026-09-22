@@ -88,3 +88,14 @@ Each platform job also runs the packaged app with `--self-test`, which boots Spr
 checks the database, the credential backend and the bundled assets, then exits with a
 status code. That catches packaging regressions (like a missing jlink module) before a
 release is published.
+
+## Manual verification after UI changes
+
+FXML is resolved at load time, so a typo in a controller field or an `fx:id` only shows
+up when the screen is opened. Before a release, launch the app and click through every
+sidebar entry once (Dashboard, Events, Wallets, Music, Text to speech, Servers, Settings,
+About). `FxmlTranslationsTest` already covers missing translation keys, but it cannot
+check controller wiring.
+
+For a packaged build, `BotDealer --self-test` covers everything that does not need a
+display: database, translations, credential store, native libraries and bundled assets.
