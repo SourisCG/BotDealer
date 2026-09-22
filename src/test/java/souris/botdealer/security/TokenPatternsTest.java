@@ -3,6 +3,8 @@
  */
 package souris.botdealer.security;
 
+import souris.botdealer.TestTokens;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,8 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TokenPatternsTest {
 
-	private static final String TOKEN =
-		String.join(".", "MTE5ODc2NTE5OTk5OTk5OTk5", "GxXxXx", "abcdefghijklmnopqrstuvwxyz123456");
+	private static final String TOKEN = TestTokens.FAKE;
 
 	@Test
 	void recognisesAValidTokenShape() {

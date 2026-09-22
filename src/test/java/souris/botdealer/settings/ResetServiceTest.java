@@ -3,6 +3,8 @@
  */
 package souris.botdealer.settings;
 
+import souris.botdealer.TestTokens;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -26,8 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class ResetServiceTest {
 
-	private static final String TOKEN =
-		String.join(".", "MTE5ODc2NTE5OTk5OTk5OTk5", "GxXxXx", "abcdefghijklmnopqrstuvwxyz123456");
+	private static final String TOKEN = TestTokens.FAKE;
 
 	@Autowired
 	private ResetService resetService;

@@ -3,6 +3,8 @@
  */
 package souris.botdealer.security;
 
+import souris.botdealer.TestTokens;
+
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,7 +24,7 @@ class EncryptedFileSecretStoreTest {
 	@TempDir
 	Path tempDir;
 
-	private final String token = String.join(".", "MTE5ODc2NTE5OTk5OTk5OTk5", "GxXxXx", "abcdefghijklmnopqrstuvwxyz123456");
+	private final String token = TestTokens.FAKE;
 
 	@Test
 	void roundTripsASecret() {
@@ -44,7 +46,7 @@ class EncryptedFileSecretStoreTest {
 	@Test
 	void overwritesAnExistingSecret() {
 		EncryptedFileSecretStore store = new EncryptedFileSecretStore(tempDir);
-		String second = String.join(".", "MTE5ODc2NTE5OTk5OTk5OTk5", "AbCdEf", "zyxwvutsrqponmlkjihgfedcba654321");
+		String second = TestTokens.FAKE_ALTERNATE;
 
 		store.write(SecretKey.DISCORD_TOKEN, token);
 		store.write(SecretKey.DISCORD_TOKEN, second);

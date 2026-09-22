@@ -3,6 +3,8 @@
  */
 package souris.botdealer.security;
 
+import souris.botdealer.TestTokens;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -26,8 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class TokenValidatorTest {
 
-	private static final String TOKEN =
-		String.join(".", "MTE5ODc2NTE5OTk5OTk5OTk5", "GxXxXx", "abcdefghijklmnopqrstuvwxyz123456");
+	private static final String TOKEN = TestTokens.FAKE;
 
 	private static final String IDENTITY_JSON = """
 		{"id":"119876519999999999","username":"botdealer","global_name":"BotDealer",

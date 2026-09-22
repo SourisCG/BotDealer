@@ -15,13 +15,8 @@ You need a Discord account and a server where you can manage applications.
 
 ## 2. Get the token
 
-In **Bot**, press **Reset Token** (or **Copy** if you just created the bot). The token
-looks like three dot-separated parts:
-
-```
-YOUR_BOT_TOKEN_HERE
-```
-
+In **Bot**, press **Reset Token** (or **Copy** if you just created the bot). The token is
+three dot-separated parts: a long base64 block, six characters, and another long block.
 That value is the password of your bot:
 
 - Never paste it into a website, a chat, a screenshot or an issue.

@@ -3,6 +3,8 @@
  */
 package souris.botdealer.security;
 
+import souris.botdealer.TestTokens;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
@@ -18,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SecretServiceTest {
 
 	private final String token =
-		String.join(".", "MTE5ODc2NTE5OTk5OTk5OTk5", "GxXxXx", "abcdefghijklmnopqrstuvwxyz123456");
+		TestTokens.FAKE;
 
 	private InMemoryStore store;
 	private SecretService service;

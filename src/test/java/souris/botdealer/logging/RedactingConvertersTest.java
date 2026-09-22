@@ -3,6 +3,8 @@
  */
 package souris.botdealer.logging;
 
+import souris.botdealer.TestTokens;
+
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.ThrowableProxy;
@@ -19,8 +21,7 @@ import static org.mockito.Mockito.when;
  */
 class RedactingConvertersTest {
 
-	private static final String TOKEN =
-		String.join(".", "MTE5ODc2NTE5OTk5OTk5OTk5", "GxXxXx", "abcdefghijklmnopqrstuvwxyz123456");
+	private static final String TOKEN = TestTokens.FAKE;
 
 	private final RedactingMessageConverter messageConverter = new RedactingMessageConverter();
 	private final RedactingThrowableConverter throwableConverter = new RedactingThrowableConverter();
@@ -42,7 +43,7 @@ class RedactingConvertersTest {
 	@Test
 	void masksMfaTokens() {
 		assertEquals("key=***REDACTED-SECRET***",
-			messageConverter.convert(eventWith("key=mfa." + "V0BDb00Kabcdefghijklmnopqrstuvwxyz0123456789")));
+			messageConverter.convert(eventWith("key=" + TestTokens.FAKE_MFA)));
 	}
 
 	@Test

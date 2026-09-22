@@ -86,5 +86,5 @@ invokes yt-dlp.
 ## Reporting a vulnerability
 
 Open an issue at <https://github.com/SourisCG/BotDealer/issues> describing the problem
-without including a real token. If you must show a token shape, use
-`YOUR_BOT_TOKEN_HERE` (a fake) instead.
+without including a real token. Never paste a token-shaped string, not even a fake one:
+secret scanners cannot tell the difference, and the log already masks real ones.
