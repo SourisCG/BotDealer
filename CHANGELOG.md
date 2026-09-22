@@ -5,6 +5,24 @@ All notable changes to BotDealer are documented here. Format follows Keep a Chan
 ## [Unreleased]
 
 ### Added
+- Phase 3a: gambling domain model and economy.
+  - Entities: `GuildConfig` (per-guild overrides), `Wallet` (`@Version` optimistic
+    locking, unique per guild+user), `LedgerEntry` (append-only audit with the balance
+    after each movement), `BetEvent`, `BetOption`, `Bet`, plus the `PayoutMode`,
+    `EventStatus`, `BetStatus` and `LedgerReason` enums.
+  - `GuildConfigService` is the single place where per-guild overrides are merged with
+    the application defaults, so callers never care where a value came from.
+  - `WalletService` is the only way money moves: every mutation runs in a
+    `TransactionTemplate` so it can be retried as a whole on an optimistic-lock
+    conflict, and always writes its ledger entry in the same transaction.
+  - `DailyRewardService` delegates to an atomic claim that re-checks the cooldown inside
+    the transaction, so two simultaneous claims cannot both be paid.
+  - `Money` centralises rounding: user input half-up, payouts truncated down so
+    rounding can never create money.
+  - 75 tests green, including a concurrent daily-claim test that asserts exactly one of
+    eight simultaneous claims is paid.
+
+### Added
 - Phase 2d: GitHub Actions pipelines.
   - `build.yml` runs the unit tests on every push/PR and additionally packages a Linux
     application image and runs `--self-test` on it, so packaging regressions fail fast.
