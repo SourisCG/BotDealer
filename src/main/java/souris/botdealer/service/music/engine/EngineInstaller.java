@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import souris.botdealer.config.AppPaths;
+import souris.botdealer.config.BundledAssets;
 
 /**
  * Keeps the external engine binaries in the app data folder.
@@ -34,19 +35,25 @@ public class EngineInstaller {
 
 	private static final Logger log = LoggerFactory.getLogger(EngineInstaller.class);
 
-	private static final String WINDOWS = "win";
-
 	private final Path enginesDir;
 	private final Path cacheDir;
+	private final BundledAssets bundled;
 
-	public EngineInstaller() {
-		this(AppPaths.dataDir());
+	@org.springframework.beans.factory.annotation.Autowired
+	public EngineInstaller(BundledAssets bundled) {
+		this(bundled, AppPaths.dataDir());
 	}
 
 	/** Test seam: keeps the installer away from the real user data folder. */
-	EngineInstaller(Path dataDir) {
+	EngineInstaller(BundledAssets bundled, Path dataDir) {
+		this.bundled = bundled;
 		this.enginesDir = dataDir.resolve("engines");
 		this.cacheDir = dataDir.resolve("cache");
+	}
+
+	/** For tests that do not exercise seeding. */
+	EngineInstaller(Path dataDir) {
+		this(new BundledAssets(), dataDir);
 	}
 
 	public Path enginesDir() {
@@ -86,7 +93,7 @@ public class EngineInstaller {
 	}
 
 	public boolean hasBundledEngines() {
-		return bundledEnginesDir().map(Files::isDirectory).orElse(false);
+		return bundled.directory("engines").isPresent();
 	}
 
 	/**
@@ -96,33 +103,7 @@ public class EngineInstaller {
 	 * @return the file names that were copied
 	 */
 	public List<String> seedFromBundle() {
-		Optional<Path> source = bundledEnginesDir().filter(Files::isDirectory);
-		if (source.isEmpty()) {
-			log.debug("No bundled engines found; the engine card will offer a download");
-			return List.of();
-		}
-		List<String> copied = new ArrayList<>();
-		try {
-			Files.createDirectories(enginesDir);
-			try (Stream<Path> files = Files.walk(source.get())) {
-				for (Path file : files.filter(Files::isRegularFile).toList()) {
-					Path target = enginesDir.resolve(source.get().relativize(file).toString());
-					if (Files.exists(target)) {
-						continue;
-					}
-					Files.createDirectories(target.getParent());
-					Files.copy(file, target, StandardCopyOption.REPLACE_EXISTING);
-					makeExecutable(target);
-					copied.add(target.getFileName().toString());
-				}
-			}
-			if (!copied.isEmpty()) {
-				log.info("Seeded {} bundled engine file(s) into {}", copied.size(), enginesDir);
-			}
-		} catch (IOException e) {
-			log.warn("Could not seed the bundled engines: {}", e.toString());
-		}
-		return copied;
+		return bundled.seed("engines", enginesDir);
 	}
 
 	/** True when the engine binaries look present (not that they run). */
@@ -143,25 +124,7 @@ public class EngineInstaller {
 		}
 	}
 
-	/**
-	 * Where the installers put the bundled engines: jpackage lays the input directory out
-	 * as {@code <app>/lib/app}, and {@code jpackage.app-path} points at {@code <app>/bin/<launcher>}.
-	 * Development runs fall back to {@code target/app/engines}.
-	 */
-	private Optional<Path> bundledEnginesDir() {
-		String appPath = System.getProperty("jpackage.app-path");
-		if (appPath != null && !appPath.isBlank()) {
-			Path launcher = Path.of(appPath);
-			Path appDir = launcher.getParent() == null ? null : launcher.getParent().getParent();
-			if (appDir != null) {
-				return Optional.of(appDir.resolve("lib").resolve("app").resolve("engines"));
-			}
-		}
-		Path dev = Path.of("target", "app", "engines");
-		return Files.isDirectory(dev) ? Optional.of(dev) : Optional.empty();
-	}
-
 	private static boolean isWindows() {
-		return System.getProperty("os.name", "").toLowerCase(Locale.ROOT).contains(WINDOWS);
+		return BundledAssets.isWindows();
 	}
 }
