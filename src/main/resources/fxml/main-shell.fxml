@@ -13,7 +13,7 @@
     fx:controller="souris.botdealer.ui.shell.MainShellController"
     styleClass="shell-root">
     <left>
-        <VBox fx:id="sidebar" styleClass="sidebar" spacing="6">
+        <VBox styleClass="sidebar" spacing="6">
             <padding>
                 <Insets top="18" right="12" bottom="14" left="12"/>
             </padding>
@@ -34,7 +34,7 @@
     </left>
     <center>
         <VBox>
-            <HBox fx:id="statusBar" styleClass="status-bar" spacing="18" alignment="CENTER_LEFT">
+            <HBox styleClass="status-bar" spacing="18" alignment="CENTER_LEFT">
                 <Label fx:id="botStatusLabel"/>
                 <Label fx:id="engineStatusLabel"/>
                 <Label fx:id="currencyStatusLabel"/>

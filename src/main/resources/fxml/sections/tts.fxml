@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+    fx:controller="souris.botdealer.ui.sections.TtsController"
+    styleClass="section-root" spacing="12">
+    <padding>
+        <Insets top="26" right="30" bottom="26" left="30"/>
+    </padding>
+
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Label fx:id="titleLabel" styleClass="section-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="engineStatusLabel" styleClass="note-label" wrapText="true"/>
+    </HBox>
+
+    <HBox spacing="14" VBox.vgrow="ALWAYS">
+        <VBox spacing="12" HBox.hgrow="ALWAYS">
+            <VBox styleClass="card" spacing="8" VBox.vgrow="ALWAYS">
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label fx:id="voicesTitle" styleClass="card-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="defaultButton" onAction="#setDefault" styleClass="small-button"/>
+                    <Button fx:id="previewButton" onAction="#preview" styleClass="small-button"/>
+                    <Button fx:id="exportButton" onAction="#exportWav" styleClass="small-button"/>
+                    <Button fx:id="deleteButton" onAction="#deleteVoice" styleClass="danger-button"/>
+                </HBox>
+                <TableView fx:id="voiceTable" prefHeight="220" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="voiceIdColumn" text="%tts.column.voice" prefWidth="200"/>
+                        <TableColumn fx:id="voiceLanguageColumn" text="%tts.column.language" prefWidth="120"/>
+                        <TableColumn fx:id="voiceSpeakersColumn" text="%tts.column.speakers" prefWidth="100"/>
+                        <TableColumn fx:id="voiceSizeColumn" text="%tts.column.size" prefWidth="90"/>
+                        <TableColumn fx:id="voiceDefaultColumn" text="%tts.column.default" prefWidth="80"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <VBox styleClass="card" spacing="8">
+                <Label fx:id="testTitle" styleClass="card-title"/>
+                <HBox spacing="8">
+                    <TextField fx:id="testField" HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="speakButton" onAction="#speak" styleClass="primary-button"/>
+                </HBox>
+                <Label fx:id="statusLabel" styleClass="result-label" wrapText="true"/>
+            </VBox>
+        </VBox>
+
+        <VBox spacing="12" prefWidth="350" minWidth="320">
+            <VBox styleClass="card" spacing="10">
+                <Label fx:id="settingsTitle" styleClass="card-title"/>
+                <VBox spacing="4">
+                    <Label fx:id="speedLabel" styleClass="field-label"/>
+                    <Slider fx:id="speedSlider" min="0.5" max="2.0" majorTickUnit="0.5" minorTickCount="1"
+                        showTickLabels="true" showTickMarks="true" snapToTicks="true"/>
+                </VBox>
+                <CheckBox fx:id="readAloudCheck" text="%tts.readAloud"/>
+                <CheckBox fx:id="duckCheck" text="%tts.duck"/>
+                <Label fx:id="readAloudHint" styleClass="note-label" wrapText="true"/>
+            </VBox>
+
+            <VBox styleClass="card" spacing="8" VBox.vgrow="ALWAYS">
+                <Label fx:id="downloadTitle" styleClass="card-title"/>
+                <ListView fx:id="catalogList" prefHeight="150" VBox.vgrow="ALWAYS"/>
+                <Button fx:id="downloadButton" onAction="#downloadVoice" styleClass="small-button"/>
+                <ProgressBar fx:id="downloadProgress" prefWidth="300"/>
+            </VBox>
+
+            <VBox styleClass="card" spacing="8">
+                <Label fx:id="engineTitle" styleClass="card-title"/>
+                <Label fx:id="engineDetail" styleClass="note-label" wrapText="true"/>
+                <HBox spacing="8">
+                    <Button fx:id="openVoicesButton" onAction="#openVoicesFolder" styleClass="small-button"/>
+                    <Button fx:id="clearCacheButton" onAction="#clearCache" styleClass="small-button"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </HBox>
+</VBox>

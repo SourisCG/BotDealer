@@ -150,6 +150,10 @@ All notable changes to BotDealer are documented here. Format follows Keep a Chan
   and the broken `SpringApplication.run` + `Application.launch` ordering.
 
 ### Fixed
+- Two more FXML wiring bugs (a missing `#speak` handler and two stale `fx:id`s). A new
+  `FxmlControllerWiringTest` reflects over the compiled controllers and verifies every
+  `fx:id` and every `onAction`/change handler, so this class of runtime-only failure
+  cannot come back.
 - A circular dependency reappeared through the music chain (dispatcher -> registry ->
   musicCommands -> musicService -> botService -> dispatcher). The bot now resolves the
   dispatcher lazily at connect time, which is also the honest semantic: it is only
