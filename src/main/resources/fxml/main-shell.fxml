@@ -34,11 +34,13 @@
     </left>
     <center>
         <VBox>
-            <HBox fx:id="statusBar" styleClass="status-bar" spacing="20" alignment="CENTER_LEFT">
+            <HBox fx:id="statusBar" styleClass="status-bar" spacing="18" alignment="CENTER_LEFT">
                 <Label fx:id="botStatusLabel"/>
                 <Label fx:id="engineStatusLabel"/>
                 <Label fx:id="currencyStatusLabel"/>
                 <Label fx:id="storageStatusLabel"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="botToggleButton" onAction="#toggleBot" styleClass="small-button"/>
             </HBox>
             <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS"/>
         </VBox>

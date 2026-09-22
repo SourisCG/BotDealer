@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="root" xmlns:fx="http://javafx.com/fxml"
+    fx:controller="souris.botdealer.ui.dialogs.EventEditorController"
+    styleClass="dialog-root" spacing="12">
+    <padding>
+        <Insets top="18" right="20" bottom="14" left="20"/>
+    </padding>
+
+    <Label fx:id="headingLabel" styleClass="wizard-title"/>
+
+    <VBox spacing="6">
+        <Label fx:id="titleFieldLabel" styleClass="field-label"/>
+        <TextField fx:id="titleField"/>
+    </VBox>
+
+    <VBox spacing="6">
+        <Label fx:id="descriptionFieldLabel" styleClass="field-label"/>
+        <TextArea fx:id="descriptionField" prefRowCount="2" wrapText="true"/>
+    </VBox>
+
+    <VBox spacing="6">
+        <Label fx:id="modeLabel" styleClass="field-label"/>
+        <HBox spacing="14">
+            <RadioButton fx:id="parimutuelButton" styleClass="option-radio"/>
+            <RadioButton fx:id="fixedOddsButton" styleClass="option-radio"/>
+        </HBox>
+        <Label fx:id="modeHintLabel" styleClass="option-detail" wrapText="true"/>
+    </VBox>
+
+    <VBox spacing="6">
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <Label fx:id="optionsLabel" styleClass="field-label"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="addOptionButton" onAction="#addOption" styleClass="small-button"/>
+        </HBox>
+        <ScrollPane fitToWidth="true" prefHeight="170" styleClass="editor-scroll">
+            <VBox fx:id="optionBox" spacing="6"/>
+        </ScrollPane>
+        <Label fx:id="liabilityLabel" styleClass="note-label" wrapText="true"/>
+    </VBox>
+
+    <HBox spacing="14">
+        <VBox spacing="6" HBox.hgrow="ALWAYS">
+            <Label fx:id="closesInLabel" styleClass="field-label"/>
+            <Spinner fx:id="closesInSpinner" editable="true"/>
+        </VBox>
+        <VBox spacing="6" HBox.hgrow="ALWAYS">
+            <Label fx:id="rakeLabel" styleClass="field-label"/>
+            <Spinner fx:id="rakeSpinner" editable="true"/>
+        </VBox>
+    </HBox>
+
+    <Label fx:id="errorLabel" styleClass="result-label" wrapText="true"/>
+</VBox>

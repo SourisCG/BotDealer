@@ -2,6 +2,22 @@
 
 All notable changes to BotDealer are documented here. Format follows Keep a Changelog (Unreleased / versions).
 
+- Phase 3d: desktop screens for the gambling features.
+  - Dashboard now shows live state: bot status with a connect/disconnect button,
+    server count, money in circulation, open events, and a server picker shared with
+    the other screens.
+  - Events screen: table of events, detail panel with per-option pools and implied
+    odds, and Open/Close/Settle/Cancel actions with confirmations for the destructive
+    ones. The event editor dialog has dynamic option rows, a payout-mode toggle, a
+    closing-time picker, rake, and validates against the same service rules before it
+    closes.
+  - Wallets screen: searchable balance table, grant/remove/set actions and the full
+    ledger of the selected member.
+  - Servers screen: per-guild overrides (currency, rewards, betting limits, admin
+    role, announce and betting channels) where an empty field visibly means "use the
+    application default".
+  - `UiSelectionModel` shares the selected server across screens and refreshes when the
+    bot connects.
 - Phase 3c: Discord bot and slash commands.
   - `DiscordBotService` owns the JDA session: connect/disconnect/restart, status
     reported to the UI, token read from the keychain at connect time and never stored
@@ -134,6 +150,9 @@ All notable changes to BotDealer are documented here. Format follows Keep a Chan
   and the broken `SpringApplication.run` + `Application.launch` ordering.
 
 ### Fixed
+- Removed i18n keys that FXML still referenced, which crashed the UI at load time.
+  A new `FxmlTranslationsTest` scans every `%key` in the FXML sources and fails the
+  build when one is missing from either bundle; it immediately caught a second one.
 - The i18n parity test was passing while translations were missing: `ResourceBundle`
   falls back to the default bundle, so `keySet()` on the Spanish bundle reported the
   English keys. The test now reads both `.properties` files as files and compares them,

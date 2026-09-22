@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
@@ -11,7 +15,13 @@
     <padding>
         <Insets top="26" right="30" bottom="26" left="30"/>
     </padding>
-    <Label fx:id="titleLabel" styleClass="section-title"/>
+
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Label fx:id="titleLabel" styleClass="section-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="%dashboard.guild" styleClass="field-label"/>
+        <ComboBox fx:id="guildCombo" prefWidth="220"/>
+    </HBox>
     <Label fx:id="welcomeLabel" styleClass="section-body" wrapText="true"/>
 
     <GridPane hgap="14" vgap="12" styleClass="card-grid">
@@ -22,18 +32,19 @@
         <VBox styleClass="card" spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
             <Label text="%dashboard.card.bot" styleClass="card-title"/>
             <Label fx:id="botValue" styleClass="card-value" wrapText="true"/>
+            <Button fx:id="botButton" onAction="#toggleBot" styleClass="small-button"/>
         </VBox>
         <VBox styleClass="card" spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <Label text="%dashboard.card.guilds" styleClass="card-title"/>
+            <Label fx:id="guildsValue" styleClass="card-value" wrapText="true"/>
+        </VBox>
+        <VBox styleClass="card" spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="1">
             <Label text="%dashboard.card.currency" styleClass="card-title"/>
             <Label fx:id="currencyValue" styleClass="card-value" wrapText="true"/>
         </VBox>
-        <VBox styleClass="card" spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="1">
-            <Label text="%dashboard.card.engine" styleClass="card-title"/>
-            <Label fx:id="engineValue" styleClass="card-value" wrapText="true"/>
-        </VBox>
         <VBox styleClass="card" spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="1">
-            <Label text="%dashboard.card.tts" styleClass="card-title"/>
-            <Label fx:id="ttsValue" styleClass="card-value" wrapText="true"/>
+            <Label text="%dashboard.card.events" styleClass="card-title"/>
+            <Label fx:id="eventsValue" styleClass="card-value" wrapText="true"/>
         </VBox>
     </GridPane>
 

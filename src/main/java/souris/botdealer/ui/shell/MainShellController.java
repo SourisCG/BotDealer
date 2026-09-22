@@ -18,7 +18,12 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import souris.botdealer.i18n.I18nService;
+import souris.botdealer.security.SecretKey;
 import souris.botdealer.security.SecretService;
+import souris.botdealer.service.discord.BotStatus;
+import souris.botdealer.service.discord.DiscordBotService;
+import souris.botdealer.service.discord.UiEventBus;
+import souris.botdealer.service.discord.UiEvents;
 import souris.botdealer.settings.AppSettingKey;
 import souris.botdealer.settings.AppSettingsService;
 import souris.botdealer.settings.MusicEngine;
@@ -28,11 +33,11 @@ import souris.botdealer.ui.UiRouter;
 import souris.botdealer.ui.sections.PlaceholderController;
 
 /**
- * Sidebar navigation + status bar.
+ * Sidebar navigation, status bar and the bot connect/disconnect control.
  *
- * <p>Section roots are cached so switching tabs does not rebuild the scene graph.
- * Every FXML controller is prototype-scoped, so the cached placeholder roots each keep
- * their own controller instance.</p>
+ * <p>Section roots are cached so switching tabs does not rebuild the scene graph. Every
+ * FXML controller is prototype-scoped, so the cached placeholder roots each keep their
+ * own controller instance.</p>
  */
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -56,28 +61,38 @@ public class MainShellController {
 	private Button languageEnButton;
 	@FXML
 	private Button languageEsButton;
+	@FXML
+	private Button botToggleButton;
 
 	private final FxViewLoader viewLoader;
 	private final I18nService i18n;
 	private final AppSettingsService settings;
 	private final SecretService secrets;
 	private final UiRouter router;
+	private final DiscordBotService bot;
 
 	private final Map<Section, Parent> cache = new EnumMap<>(Section.class);
 	private final Map<Section, Button> navButtons = new EnumMap<>(Section.class);
 
 	public MainShellController(FxViewLoader viewLoader, I18nService i18n, AppSettingsService settings,
-			SecretService secrets, UiRouter router) {
+			SecretService secrets, UiRouter router, DiscordBotService bot, UiEventBus uiEvents) {
 		this.viewLoader = viewLoader;
 		this.i18n = i18n;
 		this.settings = settings;
 		this.secrets = secrets;
 		this.router = router;
+		this.bot = bot;
+		uiEvents.subscribe(event -> {
+			if (event instanceof UiEvents.BotStatusChanged) {
+				refreshBotStatus();
+			}
+		});
 	}
 
 	public void initialize() {
 		buildNavigation();
-		populateStatusBar();
+		populateStaticStatus();
+		refreshBotStatus();
 		highlightLanguageButton();
 		select(Section.DASHBOARD);
 	}
@@ -114,6 +129,30 @@ public class MainShellController {
 		return loaded.root();
 	}
 
+	// ---------------------------------------------------------------- bot control
+
+	@FXML
+	private void toggleBot() {
+		if (bot.status() == BotStatus.CONNECTED || bot.status() == BotStatus.STARTING) {
+			bot.stop();
+		} else {
+			bot.startAsync();
+		}
+	}
+
+	private void refreshBotStatus() {
+		BotStatus status = bot.status();
+		String label = i18n.get(status.labelKey());
+		if (status == BotStatus.ERROR && !bot.lastErrorKey().isBlank()) {
+			label = label + " · " + i18n.get(bot.lastErrorKey());
+		}
+		botStatusLabel.setText(i18n.get("shell.status.bot", label));
+		botToggleButton.setText(status == BotStatus.CONNECTED || status == BotStatus.STARTING
+			? i18n.get("shell.bot.disconnect")
+			: i18n.get("shell.bot.connect"));
+		botToggleButton.setDisable(status == BotStatus.STARTING);
+	}
+
 	// ---------------------------------------------------------------- language
 
 	@FXML
@@ -143,17 +182,17 @@ public class MainShellController {
 
 	// ---------------------------------------------------------------- status bar
 
-	private void populateStatusBar() {
-		boolean tokenStored = secrets.isSet(souris.botdealer.security.SecretKey.DISCORD_TOKEN);
-		botStatusLabel.setText(tokenStored
-			? i18n.get("shell.status.bot.ready")
-			: i18n.get("shell.status.bot.offline"));
+	private void populateStaticStatus() {
 		engineStatusLabel.setText(i18n.get("shell.status.engine",
 			i18n.get(MusicEngine.fromStored(settings.get(AppSettingKey.MUSIC_ENGINE)).titleKey())));
 		currencyStatusLabel.setText(i18n.get("shell.status.currency",
 			settings.get(AppSettingKey.CURRENCY_SYMBOL), settings.get(AppSettingKey.CURRENCY_PLURAL)));
 		storageStatusLabel.setText(i18n.get("shell.status.storage", secrets.store().displayName()));
 		versionLabel.setText(i18n.get("app.version", version()));
+		if (!secrets.isSet(SecretKey.DISCORD_TOKEN)) {
+			botToggleButton.setDisable(true);
+			botToggleButton.setTooltip(new Tooltip(i18n.get("bot.error.noToken")));
+		}
 	}
 
 	/** Implementation version is absent in dev runs, hence the fallback. */

@@ -10,10 +10,11 @@ package souris.botdealer.ui;
 public enum Section {
 
 	DASHBOARD("dashboard", "/fxml/sections/dashboard.fxml"),
-	EVENTS("events", "/fxml/sections/placeholder.fxml"),
-	WALLETS("wallets", "/fxml/sections/placeholder.fxml"),
+	EVENTS("events", "/fxml/sections/events.fxml"),
+	WALLETS("wallets", "/fxml/sections/wallets.fxml"),
 	MUSIC("music", "/fxml/sections/placeholder.fxml"),
 	TTS("tts", "/fxml/sections/placeholder.fxml"),
+	GUILDS("guilds", "/fxml/sections/guilds.fxml"),
 	SETTINGS("settings", "/fxml/sections/settings.fxml"),
 	ABOUT("about", "/fxml/sections/about.fxml");
 

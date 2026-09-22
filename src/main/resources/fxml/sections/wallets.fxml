@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+    fx:controller="souris.botdealer.ui.sections.WalletsController"
+    styleClass="section-root" spacing="12">
+    <padding>
+        <Insets top="26" right="30" bottom="26" left="30"/>
+    </padding>
+
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Label fx:id="titleLabel" styleClass="section-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="%dashboard.guild" styleClass="field-label"/>
+        <ComboBox fx:id="guildCombo" prefWidth="190"/>
+        <TextField fx:id="searchField" promptText="%wallets.search" prefWidth="180"/>
+        <Button fx:id="grantButton" onAction="#grant" styleClass="small-button"/>
+        <Button fx:id="removeButton" onAction="#remove" styleClass="small-button"/>
+        <Button fx:id="setButton" onAction="#setBalance" styleClass="small-button"/>
+    </HBox>
+
+    <Label fx:id="summaryLabel" styleClass="note-label"/>
+
+    <HBox spacing="14" VBox.vgrow="ALWAYS">
+        <TableView fx:id="walletTable" HBox.hgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="memberColumn" text="%wallets.column.member" prefWidth="240"/>
+                <TableColumn fx:id="balanceColumn" text="%wallets.column.balance" prefWidth="140"/>
+                <TableColumn fx:id="dailyColumn" text="%wallets.column.daily" prefWidth="160"/>
+            </columns>
+        </TableView>
+
+        <VBox styleClass="card" spacing="8" prefWidth="360" minWidth="300">
+            <Label fx:id="historyTitle" styleClass="card-title" wrapText="true"/>
+            <TableView fx:id="ledgerTable" prefHeight="320">
+                <columns>
+                    <TableColumn fx:id="ledgerWhenColumn" text="%wallets.column.when" prefWidth="120"/>
+                    <TableColumn fx:id="ledgerReasonColumn" text="%wallets.column.reason" prefWidth="130"/>
+                    <TableColumn fx:id="ledgerDeltaColumn" text="%wallets.column.delta" prefWidth="90"/>
+                    <TableColumn fx:id="ledgerAfterColumn" text="%wallets.column.after" prefWidth="90"/>
+                </columns>
+            </TableView>
+            <Label fx:id="statusLabel" styleClass="result-label" wrapText="true"/>
+        </VBox>
+    </HBox>
+</VBox>

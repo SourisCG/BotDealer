@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+    fx:controller="souris.botdealer.ui.sections.GuildsController"
+    styleClass="section-root" spacing="12">
+    <padding>
+        <Insets top="26" right="30" bottom="26" left="30"/>
+    </padding>
+
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Label fx:id="titleLabel" styleClass="section-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="%dashboard.guild" styleClass="field-label"/>
+        <ComboBox fx:id="guildCombo" prefWidth="220"/>
+        <Button fx:id="saveButton" onAction="#save" styleClass="primary-button"/>
+    </HBox>
+    <Label fx:id="hintLabel" styleClass="note-label" wrapText="true"/>
+
+    <GridPane hgap="16" vgap="12">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="50"/>
+            <ColumnConstraints percentWidth="50"/>
+        </columnConstraints>
+
+        <VBox styleClass="card" spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <Label fx:id="economyTitle" styleClass="card-title"/>
+            <HBox spacing="10">
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label fx:id="singularLabel" styleClass="field-label"/>
+                    <TextField fx:id="singularField"/>
+                </VBox>
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label fx:id="pluralLabel" styleClass="field-label"/>
+                    <TextField fx:id="pluralField"/>
+                </VBox>
+                <VBox spacing="4" prefWidth="80">
+                    <Label fx:id="symbolLabel" styleClass="field-label"/>
+                    <TextField fx:id="symbolField"/>
+                </VBox>
+            </HBox>
+            <HBox spacing="10">
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label fx:id="startingBalanceLabel" styleClass="field-label"/>
+                    <TextField fx:id="startingBalanceField"/>
+                </VBox>
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label fx:id="dailyAmountLabel" styleClass="field-label"/>
+                    <TextField fx:id="dailyAmountField"/>
+                </VBox>
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label fx:id="dailyCooldownLabel" styleClass="field-label"/>
+                    <TextField fx:id="dailyCooldownField"/>
+                </VBox>
+            </HBox>
+            <HBox spacing="10">
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label fx:id="minBetLabel" styleClass="field-label"/>
+                    <TextField fx:id="minBetField"/>
+                </VBox>
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label fx:id="maxBetLabel" styleClass="field-label"/>
+                    <TextField fx:id="maxBetField"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <VBox styleClass="card" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <Label fx:id="moderationTitle" styleClass="card-title"/>
+            <VBox spacing="4">
+                <Label fx:id="localeLabel" styleClass="field-label"/>
+                <ComboBox fx:id="localeCombo"/>
+            </VBox>
+            <VBox spacing="4">
+                <Label fx:id="adminRoleLabel" styleClass="field-label"/>
+                <TextField fx:id="adminRoleField"/>
+            </VBox>
+            <VBox spacing="4">
+                <Label fx:id="announceChannelLabel" styleClass="field-label"/>
+                <TextField fx:id="announceChannelField"/>
+            </VBox>
+            <VBox spacing="4">
+                <Label fx:id="bettingChannelLabel" styleClass="field-label"/>
+                <TextField fx:id="bettingChannelField"/>
+            </VBox>
+        </VBox>
+    </GridPane>
+
+    <Label fx:id="statusLabel" styleClass="result-label" wrapText="true"/>
+</VBox>
