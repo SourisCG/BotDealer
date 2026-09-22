@@ -68,6 +68,11 @@ public final class AppPaths {
 		return dataDir().resolve("config");
 	}
 
+	/** Encrypted-secret fallback files live here (see EncryptedFileSecretStore). */
+	public static Path secretsDir() {
+		return dataDir().resolve("secrets");
+	}
+
 	private static Path resolve() {
 		String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
 		String home = System.getProperty("user.home");
